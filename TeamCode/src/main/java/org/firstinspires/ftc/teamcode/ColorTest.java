@@ -35,6 +35,7 @@ import android.app.Activity;
 import android.graphics.Color;
 import android.view.View;
 
+import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.ftcrobotcontroller.R;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -84,10 +85,21 @@ public class ColorTest extends LinearOpMode {
     motorBL = hardwareMap.dcMotor.get("motorBL");
     colorSensor = hardwareMap.colorSensor.get("sensor_color");
     lightSensor = hardwareMap.opticalDistanceSensor.get("sensor_light");
+    ModernRoboticsI2cGyro gyro = (ModernRoboticsI2cGyro)hardwareMap.gyroSensor.get("gyro");
+
+    telemetry.addData(">", "Gyro Calibrating. Do Not move!");
+    telemetry.update();
+    gyro.calibrate();
+    while(gyro.isCalibrating()) { sleep(50); }
+    telemetry.addData(">", "GYRO CALIBRATED, CLEARED FOR TAKEOFF");
+    telemetry.update();
+
     // Reversing Motors
     motorFR.setDirection(DcMotor.Direction.REVERSE);
     motorBR.setDirection(DcMotor.Direction.REVERSE);
     waitForStart();    // <-- DELETE IF UNNECESSARY
+
+
 
     // Color Sensor Stuff
     // hsvValues is an array that will hold the hue, saturation, and value information.
@@ -104,6 +116,9 @@ public class ColorTest extends LinearOpMode {
     boolean bLedOn = true;
     // Set the LED in the beginning
     colorSensor.enableLed(bLedOn);
+
+
+
 
     // wait for the start button to be pressed.
     waitForStart();
