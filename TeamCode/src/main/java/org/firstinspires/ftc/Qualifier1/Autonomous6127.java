@@ -1,11 +1,10 @@
-package FTC6127.Qualifier1;
+package org.firstinspires.ftc.Qualifier1;
 
 /**
  * Created by Shruthi Ramalingam on 12/30/2016.
  */
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
