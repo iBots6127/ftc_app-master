@@ -1,4 +1,4 @@
-package FTC6127.Qualifier1;
+package org.firstinspires.ftc.Qualifier1;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
