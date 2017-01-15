@@ -44,7 +44,7 @@ import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
-@TeleOp(name = "ODSValueDisplayer", group = "Sensor")
+@TeleOp(name = "ODSValueDisplayer", group = "Sensora")
 public class ODSValueDisplayer extends LinearOpMode {
 
   OpticalDistanceSensor odsSensor;  // Hardware Device Object
