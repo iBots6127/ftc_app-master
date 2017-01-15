@@ -13,7 +13,7 @@ For more information, go to http://modernroboticsedu.com/course/view.php?id=5
 Support is available by emailing support@modernroboticsinc.com.
 */
 
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.RangeMRSamples;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
