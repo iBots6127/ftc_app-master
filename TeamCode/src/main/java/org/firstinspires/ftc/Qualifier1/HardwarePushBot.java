@@ -1,4 +1,4 @@
-package FTC6127.Qualifier1;
+package org.firstinspires.ftc.Qualifier1;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -35,8 +35,8 @@ public class HardwarePushBot
     private ElapsedTime period  = new ElapsedTime();
 
     /* Constructor */
-    public HardwarePushBot(){
-
+    public HardwarePushBot()
+    {
     }
 
     /* Initialize standard Hardware interfaces */
@@ -50,10 +50,10 @@ public class HardwarePushBot
         botleftMotor =   hwMap.dcMotor.get("motorBL");
         botrightMotor = hwMap.dcMotor.get("motorBR");
 //        armMotor    = hwMap.dcMotor.get("left_arm");
-        topleftMotor.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
-        toprightMotor.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
-        botleftMotor.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
-        botrightMotor.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
+        topleftMotor.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
+        toprightMotor.setDirection(DcMotor.Direction.FORWARD);// Set to FORWARD if using AndyMark motors
+        botleftMotor.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
+        botrightMotor.setDirection(DcMotor.Direction.FORWARD);// Set to FORWARD if using AndyMark motors
         // Set all motors to zero power
         topleftMotor.setPower(0);
         toprightMotor.setPower(0);

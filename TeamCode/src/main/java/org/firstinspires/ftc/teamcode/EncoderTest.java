@@ -11,7 +11,7 @@ import org.firstinspires.ftc.robotcontroller.external.samples.HardwarePushbot;
  * Created by Shlok on 12/29/2016.
  *
  */
-
+/*
 @Autonomous(name = "EncoderTest")
 public class EncoderTest extends LinearOpMode {
     // Drive System for Basic Movement
@@ -38,5 +38,5 @@ public class EncoderTest extends LinearOpMode {
         motorBL = hardwareMap.dcMotor.get("motorBL");
     }
 }
-
+*/
 
