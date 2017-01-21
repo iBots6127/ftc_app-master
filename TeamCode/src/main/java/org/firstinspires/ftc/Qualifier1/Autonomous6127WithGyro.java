@@ -30,10 +30,16 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 package org.firstinspires.ftc.Qualifier1;
 
+import android.app.Activity;
+import android.view.View;
+
+import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cColorSensor;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
+import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
@@ -51,12 +57,14 @@ public class Autonomous6127WithGyro extends LinearOpMode {
     HardwarePushBot         robot   = new HardwarePushBot();   // Use a Pushbot's hardware
     ModernRoboticsI2cGyro   gyro    = null;                    // Additional Gyro device
 
+
     static final double     COUNTS_PER_MOTOR_REV    = 1440 ;    // eg: TETRIX Motor Encoder
     static final double     DRIVE_GEAR_REDUCTION    = 1.0 ;     // This is < 1.0 if geared UP
     static final double     WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
     static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
 
                                                       (WHEEL_DIAMETER_INCHES * 3.1415);
+    private DcMotor motorCC;
 
     // These constants define the desired driving/control characteristics
     // The can/should be tweaked to suite the specific robot drive train.
@@ -67,6 +75,8 @@ public class Autonomous6127WithGyro extends LinearOpMode {
     static final double     P_TURN_COEFF            = 0.1;     // Larger is more responsive, but also less stable
     static final double     P_DRIVE_COEFF           = 0.15;     // Larger is more responsive, but also less stable
 
+    ModernRoboticsI2cRangeSensor rangeSensor    = null;
+    ColorSensor colorSensor;
 
 
     @Override
@@ -79,11 +89,21 @@ public class Autonomous6127WithGyro extends LinearOpMode {
         robot.init(hardwareMap);
         gyro = (ModernRoboticsI2cGyro)hardwareMap.gyroSensor.get("sensor_gyro");
 
+        colorSensor = (ModernRoboticsI2cColorSensor)hardwareMap.colorSensor.get("sensor_color");
+        motorCC = hardwareMap.dcMotor.get("motorCC");
+        motorCC.setDirection(DcMotor.Direction.FORWARD);
+        motorCC.setPower(0);
+
+
+        colorSensor.enableLed(false);
+
+
         // Ensure the robot it stationary, then reset the encoders and calibrate the gyro.
         robot.topleftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.toprightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.botleftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.botrightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorCC.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         // Send telemetry message to alert driver that we are calibrating;
         telemetry.addData(">", "Calibrating Gyro");    //
         telemetry.update();
@@ -104,6 +124,18 @@ public class Autonomous6127WithGyro extends LinearOpMode {
         robot.toprightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.botleftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robot.botrightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorCC.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+
+
+        // Color Sensor Stuff
+        // hsvValues is an array that will hold the hue, saturation, and value information.
+        float hsvValues[] = {0F,0F,0F};
+        // values is a reference to the hsvValues array.
+        final float values[] = hsvValues;
+        // get a reference to the RelativeLayout so we can change the background
+        // color of the Robot Controller app to match the hue detected by the RGB sensor.
+        final View relativeLayout = ((Activity) hardwareMap.appContext).findViewById(com.qualcomm.ftcrobotcontroller.R.id.RelativeLayout);
 
 
         // Wait for the game to start (Display Gyro value), and reset gyro before we move..
@@ -114,28 +146,40 @@ public class Autonomous6127WithGyro extends LinearOpMode {
         }
         gyro.resetZAxisIntegrator();
 
+        // run the choo choo for
+        motorCC.setTargetPosition(1180);
+        motorCC.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motorCC.setPower(0.8);
+        sleep(1000);
+        motorCC.setPower(0);
+
+
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
-        // Put a hold after each turn
+        // Put a hold after each
+        // turn
       //  telemetry.addData("Path", "Drive Straight");
       //  telemetry.update();
       //      gyroDrive(DRIVE_SPEED, 43.0, 0.0);    // Drive FWD
         // 48 inches
-        telemetry.addData("Path", "Turn Left");
-        telemetry.update();
-            gyroTurn( TURN_SPEED, 45.0);         // Turn  CCW to -45 Degrees
-        gyroHold( TURN_SPEED,  45.0, 0.5);    // Hold  45 Deg heading for a 1/2 second
-        telemetry.addData("Path", "Hold");
-        telemetry.update();
+
       //  gyroHold( TURN_SPEED,  0.0, 0.5);    // Hold  45 Deg heading for a 1/2 second
+        telemetry.addData("Heading", gyro.getHeading());
         telemetry.addData("Path", "Drive Straight");
         telemetry.update();
         gyroDrive( DRIVE_SPEED, 45.0, 0.0);    // Drive FWD 15 inches
-       // gyroTurn( TURN_SPEED,  45.0);         // Turn  CW  to  45 Degrees
-       // gyroTurn( TURN_SPEED,   0.0);         // Turn  CW  to   0 Degrees
-       // gyroHold( TURN_SPEED,   0.0, 1.0);    // Hold  0 Deg heading for a 1 second
-       // gyroDrive(DRIVE_SPEED,-48.0, 0.0);    // Drive REV 48 inches
-       // gyroHold( TURN_SPEED,   0.0, 0.5);    // Hold  0 Deg heading for a 1/2 second
+        gyroHold( TURN_SPEED,   0.0, 1.0);
+        telemetry.addData("Heading", gyro.getHeading());
+        sleep(3000);
+
+            gyroTurn(TURN_SPEED, 45.0);         // Turn  CW  to  45 Degrees
+            // gyroTurn( TURN_SPEED,   0.0);         // Turn  CW  to   0 Degrees
+            gyroHold(TURN_SPEED, 0.0, 1.0);    // Hold  0 Deg heading for a 1 second
+        telemetry.addData("Heading", gyro.getHeading());
+        sleep(3000);
+
+        gyroDrive(DRIVE_SPEED,48.0, 0.0);    // Drive REV 48 inches
+        gyroHold( TURN_SPEED,   0.0, 0.5);    // Hold  0 Deg heading for a 1/2 second
 
         telemetry.addData("Path", "Complete");
         telemetry.update();
@@ -230,12 +274,13 @@ public class Autonomous6127WithGyro extends LinearOpMode {
                 robot.botrightMotor.setPower(rightSpeed);
 
                 // Display drive status for the driver.
-                telemetry.addData("Err/St",  "%5.1f/%5.1f",  error, steer);
-                telemetry.addData("Target",  "Starting at %7d :%7d  %7d :%7d ",      newTopLeftTarget,  newTopRightTarget,newBotLeftTarget,newBotRightTarget);
-                telemetry.addData("Path",  "Starting at %7d :%7d  %7d :%7d ",
-                        robot.topleftMotor.getCurrentPosition(),
-                        robot.toprightMotor.getCurrentPosition(),  robot.botleftMotor.getCurrentPosition(),  robot.botrightMotor.getCurrentPosition());
+                //telemetry.addData("Err/St",  "%5.1f/%5.1f",  error, steer);
+                //telemetry.addData("Target",  "Starting at %7d :%7d  %7d :%7d ",      newTopLeftTarget,  newTopRightTarget,newBotLeftTarget,newBotRightTarget);
+                //telemetry.addData("Path",  "Starting at %7d :%7d  %7d :%7d ",
+                //        robot.topleftMotor.getCurrentPosition(),
+                //        robot.toprightMotor.getCurrentPosition(),  robot.botleftMotor.getCurrentPosition(),  robot.botrightMotor.getCurrentPosition());
                 telemetry.addData("Speed",   "%5.2f:%5.2f",  leftSpeed, rightSpeed);
+                telemetry.addData("Heading", gyro.getHeading());
                 telemetry.update();
             }
 
@@ -336,10 +381,10 @@ public class Autonomous6127WithGyro extends LinearOpMode {
         }
 
         // Send desired speeds to motors.
-        robot.topleftMotor.setPower(leftSpeed);
-        robot.botleftMotor.setPower(leftSpeed);
-        robot.toprightMotor.setPower(rightSpeed);
-        robot.botrightMotor.setPower(rightSpeed);
+        robot.topleftMotor.setPower(rightSpeed);
+        robot.botleftMotor.setPower(rightSpeed);
+        robot.toprightMotor.setPower(leftSpeed);
+        robot.botrightMotor.setPower(leftSpeed);
 
         // Display it for the driver.
         telemetry.addData("Target", "%5.2f", angle);

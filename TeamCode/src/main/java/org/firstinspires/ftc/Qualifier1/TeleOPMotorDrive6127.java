@@ -23,7 +23,9 @@ import com.qualcomm.robotcore.util.Range;
         private DcMotor motorBR;
         private DcMotor motorBL;
         private DcMotor motorCC;
+        private DcMotor motorBB;
 
+        public static final double ARM_UP_POWER    =  0.45 ;
         @Override
         public void runOpMode() throws InterruptedException
         {
@@ -32,12 +34,13 @@ import com.qualcomm.robotcore.util.Range;
             motorBR = hardwareMap.dcMotor.get("motorBR");
             motorBL = hardwareMap.dcMotor.get("motorBL");
             motorCC = hardwareMap.dcMotor.get("motorCC");
+            motorBB = hardwareMap.dcMotor.get("motorBB");
             motorFR.setDirection(DcMotor.Direction.REVERSE);
             motorBR.setDirection(DcMotor.Direction.REVERSE);
             motorFL.setDirection(DcMotor.Direction.FORWARD);
             motorBL.setDirection(DcMotor.Direction.FORWARD);
             motorCC.setDirection(DcMotor.Direction.FORWARD);
-
+            motorBB.setDirection(DcMotor.Direction.FORWARD);
             motorFR.setPower(0);
             motorFL.setPower(0);
             motorBR.setPower(0);
@@ -51,6 +54,7 @@ import com.qualcomm.robotcore.util.Range;
             motorBR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             motorBL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             motorCC.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            motorBB.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             waitForStart();
 
             while(opModeIsActive())
@@ -70,8 +74,6 @@ import com.qualcomm.robotcore.util.Range;
                 motorBR.setPower(BRspeed);
                 motorBL.setPower(BLspeed);
 
-<<<<<<< HEAD
-=======
                 if (gamepad1.y)
                 {
                     //set choo choo encoder position
@@ -84,7 +86,20 @@ import com.qualcomm.robotcore.util.Range;
                     motorCC.setPower(0);
                 }
 
->>>>>>> refs/remotes/origin/master
+                if (gamepad1.x)
+                {
+                    //set choo choo encoder position
+                    motorBB.setPower(0.5);
+                    telemetry.addData("BB",  "%.2f", 0.5);
+                    telemetry.update();
+
+                }
+                else {
+
+                    motorBB.setPower(0);
+                }
+
+
 
             }
         }
