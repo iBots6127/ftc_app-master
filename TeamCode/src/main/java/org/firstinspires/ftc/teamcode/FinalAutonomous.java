@@ -8,10 +8,10 @@ import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcontroller.external.samples.HardwarePushbot;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 /**
- * Created by Shlok on 1/3/2017.
- *
+ * Created by Shlok on 1/3/2017. *
  */
 
 @Autonomous(name = "FinalAutonomous", group = "Final")
@@ -21,9 +21,10 @@ public class FinalAutonomous extends LinearOpMode {
     private DcMotor motorFL;
     private DcMotor motorBR;
     private DcMotor motorBL;
+    private DcMotor motorBP;
     ModernRoboticsI2cRangeSensor rangeSensor;
     ColorSensor colorSensor;
-    private int count;
+    private int count = 0;
 
     // Eoncoder Setup
     static final double     COUNTS_PER_MOTOR_REV    = 1120 ;    // 1120 for andymarx, 1440 for tetrix
@@ -46,10 +47,10 @@ public class FinalAutonomous extends LinearOpMode {
         rangeSensor = hardwareMap.get(ModernRoboticsI2cRangeSensor.class, "sensor_range");
 
         // Gyro Sensor
-        ModernRoboticsI2cGyro gyro = (ModernRoboticsI2cGyro)hardwareMap.gyroSensor.get("gyro");
-        /*int xVal, yVal, zVal = 0;     // Gyro rate Values
+        ModernRoboticsI2cGyro gyro = (ModernRoboticsI2cGyro)hardwareMap.gyroSensor.get("sensor_gyro");
+        int xVal, yVal, zVal = 0;     // Gyro rate Values
         int heading = 0;              // Gyro integrated heading
-        int angleZ = 0;*/
+        int angleZ = 0;
         telemetry.addData(">", "GYRO CALIBRATING, PLEASE HOLD");
         telemetry.update();
         gyro.calibrate();
@@ -93,40 +94,85 @@ public class FinalAutonomous extends LinearOpMode {
 
         waitForStart();
 
+        xVal = gyro.rawX();
+        yVal = gyro.rawY();
+        zVal = gyro.rawZ();
+
+        heading = gyro.getHeading();
+        angleZ  = gyro.getIntegratedZValue();
+
+        telemetry.addData("0", "Heading %03d", heading);
+        telemetry.addData("1", "Int. Ang. %03d", angleZ);
+        telemetry.addData("2", "X av. %03d", xVal);
+        telemetry.addData("3", "Y av. %03d", yVal);
+        telemetry.addData("4", "Z av. %03d", zVal);
+
+        // S1: Sideways 39 Inches with 10 Sec timeout
+
+
         // S3: Forward 17 Inches with 20 Sec timeout
         telemetry.addData("Path", "Driving Straight");
         telemetry.update();
         sleep(1000);
-        encoderDrive(DRIVE_SPEED, 18, 18, 18, 18, 3);
+        encoderDrive(DRIVE_SPEED, -25, -25, -25, -25, 3);
         telemetry.addData("Path1",  "Starting at %7d :%7d  %7d :%7d ",
                 motorFR.getCurrentPosition(),
                 motorFL.getCurrentPosition(),
                 motorBR.getCurrentPosition(),
                 motorBL.getCurrentPosition());
-
-        // S3: Sideways 39 Inches with 10 Sec timeout
-        telemetry.addData("Path", "Driving Sideways");
         telemetry.update();
-        encoderDrive(DRIVE_SPEED, 40, -40, -40, 40, 10);
-        telemetry.addData("Path2",  "Starting at %7d :%7d  %7d :%7d ",
+
+        /*// S3: Forward 17 Inches with 20 Sec timeout
+        telemetry.addData("Path", "Rotating");
+        telemetry.update();
+        sleep(1000);
+        encoderDrive(0.2, -59, 59, -59, 50, 7);
+        telemetry.addData("Path1",  "Starting at %7d :%7d  %7d :%7d ",
                 motorFR.getCurrentPosition(),
                 motorFL.getCurrentPosition(),
                 motorBR.getCurrentPosition(),
                 motorBL.getCurrentPosition());
-        telemetry.addData("Path", "Complete");
-        telemetry.update();
+        telemetry.update();*/
 
-        telemetry.addData("Path", "Driving Sideways");
+        while(gyro.getHeading() < 270 || (gyro.getHeading() > 275) && opModeIsActive()) {
+            telemetry.addData("Heading", gyro.getHeading());
+            telemetry.update();
+            motorFR.setPower(-.15);
+            motorBR.setPower(-.15);
+            motorFL.setPower(.15);
+            motorBL.setPower(.15);
+            telemetry.addData("Heading", gyro.getHeading());
+            telemetry.update();
+        }
+        motorFR.setPower(0);
+        motorBR.setPower(0);
+        motorFL.setPower(0);
+        motorBL.setPower(0);
+
+        count = 1;
+        telemetry.addData("Path", "Driving Straight");
         telemetry.update();
-        encoderDrive(DRIVE_SPEED, 15, -15, -15, 15, 6);
-        telemetry.addData("Path2",  "Starting at %7d :%7d  %7d :%7d ",
+        sleep(1000);
+        encoderDrive(DRIVE_SPEED, -60, -60, -60, -60, 7);
+        telemetry.addData("Path1",  "Starting at %7d :%7d  %7d :%7d ",
                 motorFR.getCurrentPosition(),
                 motorFL.getCurrentPosition(),
                 motorBR.getCurrentPosition(),
                 motorBL.getCurrentPosition());
-        telemetry.addData("Path", "Complete");
         telemetry.update();
 
+        /*while (rangeSensor.cmUltrasonic() > 15 || rangeSensor.cmUltrasonic() == 0 && opModeIsActive()) {
+            motorFR.setPower(-0.5);
+            motorFL.setPower(-0.5);
+            motorBR.setPower(-0.5);
+            motorBL.setPower(-0.5);
+            telemetry.addData("cm sensed", rangeSensor.cmUltrasonic());
+            telemetry.update();
+        }
+        motorFR.setPower(0);
+        motorBR.setPower(0);
+        motorFL.setPower(0);
+        motorBL.setPower(0);*/
         /**
          * To Be Added:
          *  1. Range Sensor senses wall and stops robot when it's near the wall and a count variable
@@ -202,10 +248,9 @@ public class FinalAutonomous extends LinearOpMode {
                     || ((motorFL.getCurrentPosition() <  newmotorFLTarget) && motorFL.isBusy())
                     || ((motorBR.getCurrentPosition() <  newmotorBRTarget) && motorBR.isBusy())
                     || ((motorBL.getCurrentPosition() <  newmotorBLTarget) && motorBL.isBusy()))*/
-                    && motorFR.isBusy() || motorFL.isBusy() || motorBR.isBusy() || motorBL.isBusy())
+                    && (motorFR.isBusy() || motorFL.isBusy() || motorBR.isBusy() || motorBL.isBusy()))
             {
-                count++;
-                if (rangeSensor.cmUltrasonic() < 15 && count == 3)
+                if (count == 1 && rangeSensor.cmUltrasonic() < 20 && rangeSensor.cmUltrasonic() != 0)
                     break;
             }
 

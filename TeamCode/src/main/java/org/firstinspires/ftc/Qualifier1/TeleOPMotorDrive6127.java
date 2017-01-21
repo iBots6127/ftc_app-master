@@ -9,12 +9,6 @@ import com.qualcomm.robotcore.util.Range;
  * Created by FTC6127 on 12/26/2016.
  */
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.util.Range;
-
     @TeleOp(name = "TeleOPMotorDrive6127", group = "Test")
     public class TeleOPMotorDrive6127 extends LinearOpMode
     {
