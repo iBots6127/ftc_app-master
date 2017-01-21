@@ -47,7 +47,7 @@ import com.qualcomm.robotcore.util.Range;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-@TeleOp(name = "GyroTest", group = "Test")
+@TeleOp(name = "GyroTest", group = "Sensors")
 public class GyroTest extends LinearOpMode {
     double rightPower, leftPower, correction, lightPower;
     final double PERFECT_COLOR_VALUE = 0.2;

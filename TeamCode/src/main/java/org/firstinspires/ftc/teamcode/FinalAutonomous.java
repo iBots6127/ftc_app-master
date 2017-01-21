@@ -7,12 +7,12 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcontroller.external.samples.HardwarePushbot;
 
 /**
- * Created by Shlok on 12/29/2016.
+ * Created by Shlok on 1/3/2017.
  *
  */
 
-@Autonomous(name = "EncoderTest", group = "Sensors")
-public class EncoderTest extends LinearOpMode {
+@Autonomous(name = "FinalAutonomous", group = "Ready")
+public class FinalAutonomous extends LinearOpMode {
     // Drive System for Basic Movement
     private DcMotor motorFR;
     private DcMotor motorFL;
@@ -52,8 +52,6 @@ public class EncoderTest extends LinearOpMode {
         motorBR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        idle(); // Don't know what this is for yet
-
         motorFR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorFL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorBR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -69,11 +67,11 @@ public class EncoderTest extends LinearOpMode {
 
         waitForStart();
 
-        // S3: Reverse 18 Inches with 20 Sec timeout
+        // S3: Reverse 17 Inches with 20 Sec timeout
         telemetry.addData("Path", "Driving Straight");
         telemetry.update();
         sleep(1000);
-        encoderDrive(DRIVE_SPEED, 18, 18, 18, 18, 20);
+        encoderDrive(DRIVE_SPEED, 18, 18, 18, 18, 3);
         telemetry.addData("Path1",  "Starting at %7d :%7d  %7d :%7d ",
                 motorFR.getCurrentPosition(),
                 motorFL.getCurrentPosition(),
@@ -83,7 +81,7 @@ public class EncoderTest extends LinearOpMode {
         // S3: Sideways 39 Inches with 10 Sec timeout
         telemetry.addData("Path", "Driving Sideways");
         telemetry.update();
-        encoderDrive(DRIVE_SPEED, 30, -30, -30, 30, 10);
+        encoderDrive(DRIVE_SPEED, 40, -40, -40, 40, 10);
         telemetry.addData("Path2",  "Starting at %7d :%7d  %7d :%7d ",
                 motorFR.getCurrentPosition(),
                 motorFL.getCurrentPosition(),
@@ -92,6 +90,30 @@ public class EncoderTest extends LinearOpMode {
         telemetry.addData("Path", "Complete");
         telemetry.update();
 
+        /**
+         * To Be Added:
+         *  1. Range Sensor senses wall and stops robot when it's near the wall and a count variable
+         *  increments past one, nullifying the if statement with the range sensor inside of the
+         *  code dictating what is done during encoderDrive
+         *  Helper Programs: RangeTest(not made yet), GyroTest, MRI_ODS_Wall_Follow
+         *
+         *  2. New count type variable made for the color sensor portion that allows the if statement
+         *  to remain active when the count is less than 2 (for the two beacons). Robot slowly strafes
+         *  until it reaches a beacon with the corresponding color and when it reaches the color
+         *  it presses button and then backs out and repeats for the next beacon.
+         *  Helper Programs: ColorTest, EncoderTest
+         *
+         *  3. Strafe away from the wall, turn, and position the robot so it can shoot the ball
+         *  Helper Programs: EncoderTest, GyroTest
+         *
+         *  4. Hit the ball of the wooden stand
+         *  Helper Programs: EncoderTest, GyroTest
+         *
+         *  Notes: Add some part of the program so that the robot stays a certain distance from the
+         *  wall at all times
+         *  Helper Programs: EncoderTest, RangeTest(not made yet), MRI_ODS_Wall_Follow
+         *
+         */
 
     }
 

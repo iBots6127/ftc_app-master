@@ -11,7 +11,6 @@ import android.view.View;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -94,21 +93,50 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
 
-        telemetry.addData("Path", "Straight");
+        telemetry.addData("Path", "Straight friday");
         telemetry.update();
+<<<<<<< HEAD
         encoderDrive(DRIVE_SPEED,  48, 48, 48, 48, 2.0 , false); // S1: Forward 47 Inches with 5 Sec timeout
+=======
+        encoderDrive(DRIVE_SPEED,  65, 65, 65, 65, 2.5 , false); // S1: Forward 47 Inches with 5 Sec timeout
+        telemetry.addData("final",  "Starting at %7d :%7d  %7d :%7d ",
+                robot.topleftMotor.getCurrentPosition(),
+                robot.toprightMotor.getCurrentPosition(),  robot.botleftMotor.getCurrentPosition(),  robot.botrightMotor.getCurrentPosition());
+>>>>>>> refs/remotes/origin/master
 
 
         telemetry.addData("Path", "Turn Left");
         telemetry.update();
         sleep(1000);
+<<<<<<< HEAD
         encoderDrive(TURN_SPEED,   34, 34, 34, 34, 2.8, true);  // S2: Turn Left with 4 Sec timeout
+=======
+        encoderDrive(TURN_SPEED,   -15, 15, -15, 15, 2.7, false);  // S2: Turn Left with 4 Sec timeout
+        telemetry.addData("final",  "Starting at %7d :%7d  %7d :%7d ",
+                robot.topleftMotor.getCurrentPosition(),
+                robot.toprightMotor.getCurrentPosition(),  robot.botleftMotor.getCurrentPosition(),  robot.botrightMotor.getCurrentPosition());
+>>>>>>> refs/remotes/origin/master
 
 
         telemetry.addData("Path", "Straight2");
         telemetry.update();
         sleep(1000);
+<<<<<<< HEAD
         encoderDrive(DRIVE_SPEED, 32, 32, 32, 32, 1.93,false);  // S3: Reverse 24 Inches with 4 Sec timeout
+=======
+        encoderDrive(DRIVE_SPEED, 48, 48, 48, 48, 3 ,false);  // S3: Reverse 24 Inches with 4 Sec timeout
+        telemetry.addData("final",  "Starting at %7d :%7d  %7d :%7d ",
+                robot.topleftMotor.getCurrentPosition(),
+                robot.toprightMotor.getCurrentPosition(),  robot.botleftMotor.getCurrentPosition(),  robot.botrightMotor.getCurrentPosition());
+
+        telemetry.addData("Path", "Glide Right");
+        telemetry.update();
+        sleep(1000);
+        encoderDrive(DRIVE_SPEED, 40, -40, -40, 40, 3.0, false);  // S3: Reverse 24 Inches with 4 Sec timeout
+        telemetry.addData("final",  "Starting at %7d :%7d  %7d :%7d ",
+                robot.topleftMotor.getCurrentPosition(),
+                robot.toprightMotor.getCurrentPosition(),  robot.botleftMotor.getCurrentPosition(),  robot.botrightMotor.getCurrentPosition());
+>>>>>>> refs/remotes/origin/master
 
         sleep(2000);
 
@@ -125,6 +153,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
         telemetry.addData("Blue ", colorSensor.blue());
         telemetry.addData("Hue", hsvValues[0]);
 
+<<<<<<< HEAD
         if(colorSensor.red() >= 2)
         {
             encoderDrive(DRIVE_SPEED,  2, 2, 2, 2, 2 , false); // S1: Forward 47 Inches with 5 Sec timeout
@@ -154,6 +183,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
                 relativeLayout.setBackgroundColor(Color.HSVToColor(0xff, values));
             }
         });
+=======
+>>>>>>> refs/remotes/origin/master
 
         telemetry.update();
         sleep(3000);
