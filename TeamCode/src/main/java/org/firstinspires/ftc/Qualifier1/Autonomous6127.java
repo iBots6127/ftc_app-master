@@ -4,11 +4,16 @@ package org.firstinspires.ftc.Qualifier1;
  * Created by Shruthi Ramalingam on 12/30/2016.
  */
 
+import android.app.Activity;
+import android.graphics.Color;
+import android.view.View;
+
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -24,6 +29,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
     /* Declare OpMode members. */
     HardwarePushBot robot   = new HardwarePushBot();   // Use a Pushbot's hardware
     ModernRoboticsI2cRangeSensor rangeSensor    = null;
+    ColorSensor colorSensor;
+
     private ElapsedTime     runtime = new ElapsedTime();
 
     static final double     COUNTS_PER_MOTOR_REV    = 1120 ;    // eg: TETRIX Motor Encoder
@@ -44,8 +51,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
          */
 
         robot.init(hardwareMap);
-
         rangeSensor = hardwareMap.get(ModernRoboticsI2cRangeSensor.class, "sensor_range");
+        colorSensor = hardwareMap.colorSensor.get("sensor_color");
+        colorSensor.enableLed(false);
+
         // Send telemetry message to signify robot waiting;
         telemetry.addData("Status", "Resetting Encoders");
         telemetry.update();
@@ -68,6 +77,17 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
                 robot.toprightMotor.getCurrentPosition(),  robot.botleftMotor.getCurrentPosition(),  robot.botrightMotor.getCurrentPosition());
         telemetry.update();
 
+
+        // Color Sensor Stuff
+        // hsvValues is an array that will hold the hue, saturation, and value information.
+        float hsvValues[] = {0F,0F,0F};
+        // values is a reference to the hsvValues array.
+        final float values[] = hsvValues;
+        // get a reference to the RelativeLayout so we can change the background
+        // color of the Robot Controller app to match the hue detected by the RGB sensor.
+        final View relativeLayout = ((Activity) hardwareMap.appContext).findViewById(com.qualcomm.ftcrobotcontroller.R.id.RelativeLayout);
+
+
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
@@ -76,56 +96,78 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
         telemetry.addData("Path", "Straight");
         telemetry.update();
-        encoderDrive(DRIVE_SPEED,  60, 60, 60, 60, 2.6 , false); // S1: Forward 47 Inches with 5 Sec timeout
-        telemetry.addData("final",  "Starting at %7d :%7d  %7d :%7d ",
-                robot.topleftMotor.getCurrentPosition(),
-                robot.toprightMotor.getCurrentPosition(),  robot.botleftMotor.getCurrentPosition(),  robot.botrightMotor.getCurrentPosition());
+        encoderDrive(DRIVE_SPEED,  48, 48, 48, 48, 2.0 , false); // S1: Forward 47 Inches with 5 Sec timeout
 
 
         telemetry.addData("Path", "Turn Left");
         telemetry.update();
         sleep(1000);
-        encoderDrive(TURN_SPEED,   12, 12, 12, 12, 1, true);  // S2: Turn Left with 4 Sec timeout
-        telemetry.addData("final",  "Starting at %7d :%7d  %7d :%7d ",
-                robot.topleftMotor.getCurrentPosition(),
-                robot.toprightMotor.getCurrentPosition(),  robot.botleftMotor.getCurrentPosition(),  robot.botrightMotor.getCurrentPosition());
+        encoderDrive(TURN_SPEED,   34, 34, 34, 34, 2.8, true);  // S2: Turn Left with 4 Sec timeout
 
 
         telemetry.addData("Path", "Straight2");
         telemetry.update();
         sleep(1000);
-        encoderDrive(DRIVE_SPEED, 32, 32, 32, 32, 1.81,false);  // S3: Reverse 24 Inches with 4 Sec timeout
-        telemetry.addData("final",  "Starting at %7d :%7d  %7d :%7d ",
-                robot.topleftMotor.getCurrentPosition(),
-                robot.toprightMotor.getCurrentPosition(),  robot.botleftMotor.getCurrentPosition(),  robot.botrightMotor.getCurrentPosition());
-
-
-        sleep(1000);
-
-        telemetry.addData("raw ultrasonic", rangeSensor.rawUltrasonic());
-        telemetry.addData("raw optical", rangeSensor.rawOptical());
-        telemetry.addData("cm optical", "%.2f cm", rangeSensor.cmOptical());
-        telemetry.addData("cm", "%.2f cm", rangeSensor.getDistance(DistanceUnit.CM));
-        telemetry.update();
-
+        encoderDrive(DRIVE_SPEED, 32, 32, 32, 32, 1.93,false);  // S3: Reverse 24 Inches with 4 Sec timeout
 
         sleep(2000);
 
-        telemetry.addData("Path", "Glide Right");
-        telemetry.update();
-        sleep(1000);
-        encoderDrive(DRIVE_SPEED, 28, -28, -28, 28, 3.0, false);  // S3: Reverse 24 Inches with 4 Sec timeout
-        telemetry.addData("final",  "Starting at %7d :%7d  %7d :%7d ",
-                robot.topleftMotor.getCurrentPosition(),
-                robot.toprightMotor.getCurrentPosition(),  robot.botleftMotor.getCurrentPosition(),  robot.botrightMotor.getCurrentPosition());
+        // read the color sensor value here
 
-        telemetry.addData("Path", "Reverse");
+        // convert the RGB values to HSV values.
+        Color.RGBToHSV(colorSensor.red() * 8, colorSensor.green() * 8, colorSensor.blue() * 8, hsvValues);
+
+        // send the info back to driver station using telemetry function.
+
+        telemetry.addData("Clear", colorSensor.alpha());
+        telemetry.addData("Red  ", colorSensor.red());
+        telemetry.addData("Green", colorSensor.green());
+        telemetry.addData("Blue ", colorSensor.blue());
+        telemetry.addData("Hue", hsvValues[0]);
+
+        if(colorSensor.red() >= 2)
+        {
+            encoderDrive(DRIVE_SPEED,  2, 2, 2, 2, 2 , false); // S1: Forward 47 Inches with 5 Sec timeout
+        }
+        else
+        {
+            encoderDrive(DRIVE_SPEED, -7.5, 7.5, 7.5, -7.5, .36, false); // S1: Forward 47 Inches with 5 Sec timeout
+
+            {
+                encoderDrive(DRIVE_SPEED, 4, 4, 4, 4, .5, false); // S1: Forward 47 Inches with 5 Sec timeout
+            }
+        }
+
+
+
+
+        if(colorSensor.blue() > 1)
+        {
+            encoderDrive(DRIVE_SPEED,  2, 2, 2, 2, 2 , false); // S1: Forward 47 Inches with 5 Sec timeout
+
+        }
+        // change the background color to match the color detected by the RGB sensor.
+        // pass a reference to the hue, saturation, and value array as an argument
+        // to the HSVToColor method.
+        relativeLayout.post(new Runnable() {
+            public void run() {
+                relativeLayout.setBackgroundColor(Color.HSVToColor(0xff, values));
+            }
+        });
+
         telemetry.update();
+        sleep(3000);
+      //  printrangesensorvalues();
+
+ //       telemetry.addData("Path", "Glide Right");
+ //       telemetry.update();
+ //       sleep(1000);
+ //        encoderDrive(DRIVE_SPEED, 28, -28, -28, 28, 3.0, false);  // S3: Reverse 24 Inches with 4 Sec timeout
+
+
 
         sleep(1000);     // pause for servos to move
 
-        telemetry.addData("Path", "Complete");
-        telemetry.update();
 
 
     }
@@ -209,6 +251,19 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
         }
     }
+
+
+    public void printrangesensorvalues()
+    {
+
+        telemetry.addData("raw ultrasonic", rangeSensor.rawUltrasonic());
+        telemetry.addData("raw optical", rangeSensor.rawOptical());
+        telemetry.addData("cm optical", "%.2f cm", rangeSensor.cmOptical());
+        telemetry.addData("cm", "%.2f cm", rangeSensor.getDistance(DistanceUnit.CM));
+        telemetry.update();
+
+    }
+
 
 }
 

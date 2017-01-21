@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.Qualifier1;
 
+import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -49,6 +51,7 @@ public class HardwarePushBot
         toprightMotor  = hwMap.dcMotor.get("motorFR");
         botleftMotor =   hwMap.dcMotor.get("motorBL");
         botrightMotor = hwMap.dcMotor.get("motorBR");
+
 //        armMotor    = hwMap.dcMotor.get("left_arm");
         topleftMotor.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
         toprightMotor.setDirection(DcMotor.Direction.FORWARD);// Set to FORWARD if using AndyMark motors
@@ -65,6 +68,7 @@ public class HardwarePushBot
         botleftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         botrightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         // Set all motors to run without encoders.
+
         // May want to use RUN_USING_ENCODERS if encoders are installed.
         topleftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         toprightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
