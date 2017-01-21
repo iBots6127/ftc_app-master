@@ -4,10 +4,14 @@ package org.firstinspires.ftc.Qualifier1;
  * Created by Shruthi Ramalingam on 12/30/2016.
  */
 
+import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
+import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 //import org.firstinspires.ftc.robotcontroller.external.samples.HardwarePushbot;
 
@@ -18,6 +22,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
     /* Declare OpMode members. */
     HardwarePushBot robot   = new HardwarePushBot();   // Use a Pushbot's hardware
+    ModernRoboticsI2cRangeSensor rangeSensor    = null;
     private ElapsedTime     runtime = new ElapsedTime();
 
     static final double     COUNTS_PER_MOTOR_REV    = 1120 ;    // eg: TETRIX Motor Encoder
@@ -25,8 +30,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
     static final double     WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
     static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
             (WHEEL_DIAMETER_INCHES * 3.1415);
-    static final double     DRIVE_SPEED             = 0.6;
-    static final double     TURN_SPEED              = 0.5;
+    static final double     DRIVE_SPEED             = 0.7;
+    static final double     TURN_SPEED              = 0.7;
 
 
     @Override
@@ -36,10 +41,12 @@ import com.qualcomm.robotcore.util.ElapsedTime;
          * Initialize the drive system variables.
          * The init() method of the hardware class does all the work here
          */
+
         robot.init(hardwareMap);
 
+        rangeSensor = hardwareMap.get(ModernRoboticsI2cRangeSensor.class, "sensor_range");
         // Send telemetry message to signify robot waiting;
-        telemetry.addData("Status", "Resetting Encoders");    //
+        telemetry.addData("Status", "Resetting Encoders");
         telemetry.update();
 
         robot.topleftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -55,7 +62,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
         robot.botrightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         // Send telemetry message to indicate successful Encoder reset
-        telemetry.addData("Path0",  "Starting at %7d :%7d  %7d :%7d ",
+        telemetry.addData("Path",  "Starting at %7d :%7d  %7d :%7d ",
                 robot.topleftMotor.getCurrentPosition(),
                 robot.toprightMotor.getCurrentPosition(),  robot.botleftMotor.getCurrentPosition(),  robot.botrightMotor.getCurrentPosition());
         telemetry.update();
@@ -66,28 +73,51 @@ import com.qualcomm.robotcore.util.ElapsedTime;
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
 
-        encoderDrive(DRIVE_SPEED,  -30, -30, 30, 30, 3.0); // S1: Forward 47 Inches with 5 Sec timeout
-        telemetry.addData("Path0",  "Starting at %7d :%7d  %7d :%7d ",
+        telemetry.addData("Path", "Straight friday");
+        telemetry.update();
+        encoderDrive(DRIVE_SPEED,  65, 65, 65, 65, 2.5 , false); // S1: Forward 47 Inches with 5 Sec timeout
+        telemetry.addData("final",  "Starting at %7d :%7d  %7d :%7d ",
                 robot.topleftMotor.getCurrentPosition(),
                 robot.toprightMotor.getCurrentPosition(),  robot.botleftMotor.getCurrentPosition(),  robot.botrightMotor.getCurrentPosition());
 
 
-        telemetry.addData("Path", "Straight");
+        telemetry.addData("Path", "Turn Left");
         telemetry.update();
         sleep(1000);
-        encoderDrive(TURN_SPEED,   -30, 30, -30, 30, 3.0);  // S2: Turn Right 12 Inches with 4 Sec timeout
-        telemetry.addData("Path0",  "Starting at %7d :%7d  %7d :%7d ",
+        encoderDrive(TURN_SPEED,   -15, 15, -15, 15, 2.7, false);  // S2: Turn Left with 4 Sec timeout
+        telemetry.addData("final",  "Starting at %7d :%7d  %7d :%7d ",
                 robot.topleftMotor.getCurrentPosition(),
                 robot.toprightMotor.getCurrentPosition(),  robot.botleftMotor.getCurrentPosition(),  robot.botrightMotor.getCurrentPosition());
 
 
-        telemetry.addData("Path", "Turn Right");
+        telemetry.addData("Path", "Straight2");
         telemetry.update();
         sleep(1000);
-        encoderDrive(DRIVE_SPEED, 30, 30, 30, 30, 3.0);  // S3: Reverse 24 Inches with 4 Sec timeout
-        telemetry.addData("Path0",  "Starting at %7d :%7d  %7d :%7d ",
+        encoderDrive(DRIVE_SPEED, 48, 48, 48, 48, 3 ,false);  // S3: Reverse 24 Inches with 4 Sec timeout
+        telemetry.addData("final",  "Starting at %7d :%7d  %7d :%7d ",
                 robot.topleftMotor.getCurrentPosition(),
                 robot.toprightMotor.getCurrentPosition(),  robot.botleftMotor.getCurrentPosition(),  robot.botrightMotor.getCurrentPosition());
+
+        telemetry.addData("Path", "Glide Right");
+        telemetry.update();
+        sleep(1000);
+        encoderDrive(DRIVE_SPEED, 40, -40, -40, 40, 3.0, false);  // S3: Reverse 24 Inches with 4 Sec timeout
+        telemetry.addData("final",  "Starting at %7d :%7d  %7d :%7d ",
+                robot.topleftMotor.getCurrentPosition(),
+                robot.toprightMotor.getCurrentPosition(),  robot.botleftMotor.getCurrentPosition(),  robot.botrightMotor.getCurrentPosition());
+
+
+        sleep(1000);
+
+        telemetry.addData("raw ultrasonic", rangeSensor.rawUltrasonic());
+        telemetry.addData("raw optical", rangeSensor.rawOptical());
+        telemetry.addData("cm optical", "%.2f cm", rangeSensor.cmOptical());
+        telemetry.addData("cm", "%.2f cm", rangeSensor.getDistance(DistanceUnit.CM));
+        telemetry.update();
+
+
+        sleep(2000);
+
 
         telemetry.addData("Path", "Reverse");
         telemetry.update();
@@ -96,6 +126,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
         telemetry.addData("Path", "Complete");
         telemetry.update();
+
+
     }
 
     /*
@@ -108,7 +140,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
      */
     public void encoderDrive(double speed,
                              double topleftInches, double toprightInches, double botleftInches, double botrightInches,
-                             double timeoutS) {
+                             double timeoutS,boolean turn) {
         int newTopLeftTarget;
         int newTopRightTarget;
         int newBotLeftTarget;
@@ -120,8 +152,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
             // Determine new target position, and pass to motor controller
             newTopLeftTarget = robot.topleftMotor.getCurrentPosition() + (int)(topleftInches * COUNTS_PER_INCH);
             newTopRightTarget = robot.toprightMotor.getCurrentPosition() + (int)(toprightInches * COUNTS_PER_INCH);
-            newBotLeftTarget = robot.topleftMotor.getCurrentPosition() + (int)(botleftInches * COUNTS_PER_INCH);
-            newBotRightTarget = robot.toprightMotor.getCurrentPosition() + (int)(botrightInches * COUNTS_PER_INCH);
+            newBotLeftTarget = robot.botleftMotor.getCurrentPosition() + (int)(botleftInches * COUNTS_PER_INCH);
+            newBotRightTarget = robot.botrightMotor.getCurrentPosition() + (int)(botrightInches * COUNTS_PER_INCH);
             robot.topleftMotor.setTargetPosition(newTopLeftTarget);
             robot.toprightMotor.setTargetPosition(newTopRightTarget);
             robot.botleftMotor.setTargetPosition(newBotLeftTarget);
@@ -135,21 +167,31 @@ import com.qualcomm.robotcore.util.ElapsedTime;
             robot.botrightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             // reset the timeout time and start motion.
             runtime.reset();
-            robot.topleftMotor.setPower(Math.abs(speed));
-            robot.toprightMotor.setPower(Math.abs(speed));
+            if (turn == true)
+            {
+                robot.topleftMotor.setPower(0);
+                robot.botleftMotor.setPower(0);
+            }
+            else {
+                robot.topleftMotor.setPower(Math.abs(speed));
+                robot.botleftMotor.setPower(Math.abs(speed));
 
-            robot.botleftMotor.setPower(Math.abs(speed));
+            }
+            robot.toprightMotor.setPower(Math.abs(speed));
             robot.botrightMotor.setPower(Math.abs(speed));
 
+
             // keep looping while we are still active, and there is time left, and both motors are running.
-            while (opModeIsActive() && (runtime.seconds() < timeoutS) && (robot.topleftMotor.getCurrentPosition() <  newTopLeftTarget && robot.toprightMotor.isBusy()))
+            while (opModeIsActive() && (runtime.seconds() < timeoutS)  && robot.toprightMotor.isBusy())
             {
                 // Display it for the driver.
-                //telemetry.addData("Path1",  "Running to %7d :%7d", newTopLeftTarget,  newTopRightTarget);
-                //telemetry.addData("Path2",  "Running at %7d :%7d",
-                //        robot.topleftMotor.getCurrentPosition(),
-                //        robot.toprightMotor.getCurrentPosition());
-               // telemetry.update();
+             //   telemetry.addData("Path1",  "Running to %7d :%7d", newTopLeftTarget,  newTopRightTarget);
+                telemetry.addData("Path",  "Starting at %7d :%7d  %7d :%7d ",
+                        robot.topleftMotor.getCurrentPosition(),
+                        robot.toprightMotor.getCurrentPosition(),  robot.botleftMotor.getCurrentPosition(),  robot.botrightMotor.getCurrentPosition());
+                telemetry.addData("runtime",  "time at %7f",runtime.seconds());
+
+                telemetry.update();
             }
 
             // Stop all motion;
@@ -164,9 +206,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
             robot.botrightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             //  sleep(250);   // optional pause after each move
 
-            telemetry.addData("Path0",  "Starting at %7d :%7d  %7d :%7d ",
-                    robot.topleftMotor.getCurrentPosition(),
-                    robot.toprightMotor.getCurrentPosition(),  robot.botleftMotor.getCurrentPosition(),  robot.botrightMotor.getCurrentPosition());
 
         }
     }

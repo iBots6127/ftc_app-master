@@ -22,6 +22,8 @@ import com.qualcomm.robotcore.util.Range;
         private DcMotor motorFL;
         private DcMotor motorBR;
         private DcMotor motorBL;
+        private DcMotor motorCC;
+
         @Override
         public void runOpMode() throws InterruptedException
         {
@@ -29,8 +31,26 @@ import com.qualcomm.robotcore.util.Range;
             motorFL = hardwareMap.dcMotor.get("motorFL");
             motorBR = hardwareMap.dcMotor.get("motorBR");
             motorBL = hardwareMap.dcMotor.get("motorBL");
+            motorCC = hardwareMap.dcMotor.get("motorCC");
             motorFR.setDirection(DcMotor.Direction.REVERSE);
             motorBR.setDirection(DcMotor.Direction.REVERSE);
+            motorFL.setDirection(DcMotor.Direction.FORWARD);
+            motorBL.setDirection(DcMotor.Direction.FORWARD);
+            motorCC.setDirection(DcMotor.Direction.FORWARD);
+
+            motorFR.setPower(0);
+            motorFL.setPower(0);
+            motorBR.setPower(0);
+            motorBL.setPower(0);
+            motorCC.setPower(0);
+
+            // Set all motors to run without encoders.
+            // May want to use RUN_USING_ENCODERS if encoders are installed.
+            motorFR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            motorFL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            motorBR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            motorBL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            motorCC.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             waitForStart();
 
             while(opModeIsActive())
@@ -49,6 +69,20 @@ import com.qualcomm.robotcore.util.Range;
                 motorFL.setPower(FLspeed);
                 motorBR.setPower(BRspeed);
                 motorBL.setPower(BLspeed);
+
+                if (gamepad1.y)
+                {
+                    //set choo choo encoder position
+                    motorCC.setTargetPosition(1080);
+                    motorCC.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    motorCC.setPower(0.5);
+                }
+                else {
+                    motorCC.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    motorCC.setPower(0);
+                }
+
+
             }
         }
     }

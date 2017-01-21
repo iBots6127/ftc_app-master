@@ -68,7 +68,7 @@ public class GyroTest extends LinearOpMode {
         motorBR = hardwareMap.dcMotor.get("motorBR");
         motorBL = hardwareMap.dcMotor.get("motorBL");
         colorSensor = hardwareMap.colorSensor.get("sensor_color");
-        ModernRoboticsI2cGyro gyro = (ModernRoboticsI2cGyro)hardwareMap.gyroSensor.get("gyro");
+        ModernRoboticsI2cGyro gyro = (ModernRoboticsI2cGyro)hardwareMap.gyroSensor.get("sensor_gyro");
 
         int xVal, yVal, zVal = 0;     // Gyro rate Values
         int heading = 0;              // Gyro integrated heading
