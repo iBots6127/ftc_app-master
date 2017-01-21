@@ -1,7 +1,10 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
+import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcontroller.external.samples.HardwarePushbot;
@@ -11,15 +14,17 @@ import org.firstinspires.ftc.robotcontroller.external.samples.HardwarePushbot;
  *
  */
 
-@Autonomous(name = "FinalAutonomous", group = "Ready")
+@Autonomous(name = "FinalAutonomous", group = "Final")
 public class FinalAutonomous extends LinearOpMode {
     // Drive System for Basic Movement
     private DcMotor motorFR;
     private DcMotor motorFL;
     private DcMotor motorBR;
     private DcMotor motorBL;
-    // Timer
-    private ElapsedTime     runtime = new ElapsedTime();
+    ModernRoboticsI2cRangeSensor rangeSensor;
+    ColorSensor colorSensor;
+    private int count;
+
     // Eoncoder Setup
     static final double     COUNTS_PER_MOTOR_REV    = 1120 ;    // 1120 for andymarx, 1440 for tetrix
     static final double     DRIVE_GEAR_REDUCTION    = 2.0 ;     // This is < 1.0 if geared UP
@@ -28,9 +33,30 @@ public class FinalAutonomous extends LinearOpMode {
             (WHEEL_DIAMETER_INCHES * 3.1415);
     static final double     DRIVE_SPEED             = 0.6;
     static final double     TURN_SPEED              = 0.5;
+    private ElapsedTime runtime = new ElapsedTime();
 
     @Override
     public void runOpMode(){
+        // Setting up Sensors
+
+        //Color Sensor
+        colorSensor = hardwareMap.colorSensor.get("sensor_color");
+
+        // Range Sensor
+        rangeSensor = hardwareMap.get(ModernRoboticsI2cRangeSensor.class, "sensor_range");
+
+        // Gyro Sensor
+        ModernRoboticsI2cGyro gyro = (ModernRoboticsI2cGyro)hardwareMap.gyroSensor.get("gyro");
+        /*int xVal, yVal, zVal = 0;     // Gyro rate Values
+        int heading = 0;              // Gyro integrated heading
+        int angleZ = 0;*/
+        telemetry.addData(">", "GYRO CALIBRATING, PLEASE HOLD");
+        telemetry.update();
+        gyro.calibrate();
+        while(gyro.isCalibrating()) { sleep(50); }
+        telemetry.addData(">", "GYRO CALIBRATED, CLEARED FOR TAKEOFF");
+        telemetry.update();
+
         // Initialization of Motors
         motorFR = hardwareMap.dcMotor.get("motorFR");
         motorFL = hardwareMap.dcMotor.get("motorFL");
@@ -67,7 +93,7 @@ public class FinalAutonomous extends LinearOpMode {
 
         waitForStart();
 
-        // S3: Reverse 17 Inches with 20 Sec timeout
+        // S3: Forward 17 Inches with 20 Sec timeout
         telemetry.addData("Path", "Driving Straight");
         telemetry.update();
         sleep(1000);
@@ -82,6 +108,17 @@ public class FinalAutonomous extends LinearOpMode {
         telemetry.addData("Path", "Driving Sideways");
         telemetry.update();
         encoderDrive(DRIVE_SPEED, 40, -40, -40, 40, 10);
+        telemetry.addData("Path2",  "Starting at %7d :%7d  %7d :%7d ",
+                motorFR.getCurrentPosition(),
+                motorFL.getCurrentPosition(),
+                motorBR.getCurrentPosition(),
+                motorBL.getCurrentPosition());
+        telemetry.addData("Path", "Complete");
+        telemetry.update();
+
+        telemetry.addData("Path", "Driving Sideways");
+        telemetry.update();
+        encoderDrive(DRIVE_SPEED, 15, -15, -15, 15, 6);
         telemetry.addData("Path2",  "Starting at %7d :%7d  %7d :%7d ",
                 motorFR.getCurrentPosition(),
                 motorFL.getCurrentPosition(),
@@ -161,17 +198,15 @@ public class FinalAutonomous extends LinearOpMode {
 
             // keep looping while we are still active, and there is time left, and motors are running.
             while (opModeIsActive() && (runtime.seconds() < timeoutS)
-                    && ((motorFR.getCurrentPosition() <  newmotorFRTarget) && motorFR.isBusy())
+                 /*   && ((motorFR.getCurrentPosition() <  newmotorFRTarget) && motorFR.isBusy())
                     || ((motorFL.getCurrentPosition() <  newmotorFLTarget) && motorFL.isBusy())
                     || ((motorBR.getCurrentPosition() <  newmotorBRTarget) && motorBR.isBusy())
-                    || ((motorBL.getCurrentPosition() <  newmotorBLTarget) && motorBL.isBusy()))
+                    || ((motorBL.getCurrentPosition() <  newmotorBLTarget) && motorBL.isBusy()))*/
+                    && motorFR.isBusy() || motorFL.isBusy() || motorBR.isBusy() || motorBL.isBusy())
             {
-                // Display it for the driver.
-                //telemetry.addData("Path1",  "Running to %7d :%7d", newmotorFLTarget,  newmotorFRTarget);
-                //telemetry.addData("Path2",  "Running at %7d :%7d",
-                //        motorFL.getCurrentPosition(),
-                //        motorFR.getCurrentPosition());
-                // telemetry.update();
+                count++;
+                if (rangeSensor.cmUltrasonic() < 15 && count == 3)
+                    break;
             }
 
             // Stop all motion;
