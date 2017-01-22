@@ -14,8 +14,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
  * Created by Shlok on 1/3/2017. *
  */
 
-@Autonomous(name = "FinalAutonomous", group = "Final")
-public class FinalAutonomous extends LinearOpMode {
+@Autonomous(name = "M1AutonomousRed", group = "Final")
+public class M1AutonomousRed extends LinearOpMode {
     // Drive System for Basic Movement
     private DcMotor motorFR;
     private DcMotor motorFL;
@@ -116,11 +116,11 @@ public class FinalAutonomous extends LinearOpMode {
         sleep(1000);
         motorCC.setPower(0);
 
-        // Forward Movement towards middle
+        // Forward Movement towards middle (away from start)
         telemetry.clearAll();
-        encoderDrive(DRIVE_SPEED, -25, -25, -25, -25, 3);
+        encoderDrive(DRIVE_SPEED, -30, -30, -30, -30, 3);
 
-        // Gyro Turn
+        // Gyro Turn 90 degrees (270 heading) toward wall
         while(gyro.getHeading() < 270 || (gyro.getHeading() > 275) && opModeIsActive()) {
             telemetry.addData("Heading", gyro.getHeading());
             telemetry.update();
@@ -142,10 +142,42 @@ public class FinalAutonomous extends LinearOpMode {
         encoderDrive(DRIVE_SPEED, -60, -60, -60, -60, 7);
 
 
-        // Strafing towards the right
+        // Strafing towards the right #1
+        count = 2;
+        encoderDrive(TURN_SPEED, 40, -40, -40, 40, 4);
+        //Push Button after color is sensed #1
+        count = 0;
+        encoderDrive(TURN_SPEED, 3, -3, -3, 3, 2);
+        encoderDrive(TURN_SPEED, -2.5, -2.5, -2.5, -2.5, 2);
+        encoderDrive(TURN_SPEED, 2.5, 2.5, 2.5, 2.5, 2);
+
+        // Strafing towards the right #2
+        encoderDrive(TURN_SPEED, 20, -20, -20, 20, 4);
         count = 2;
         encoderDrive(TURN_SPEED, 100, -100, -100, 100, 10);
-        sleep(50000);
+        //Press Button after color is sensed #2
+        count = 0;
+        encoderDrive(TURN_SPEED, 3, -3, -3, 3, 2);
+        count = 3;
+        encoderDrive(TURN_SPEED, -5, -5, -5, -5, 2);
+        encoderDrive(TURN_SPEED, 5, 5, 5, 5, 2);
+
+        // Turn towards center ball
+        while(gyro.getHeading() < 135 || (gyro.getHeading() > 140) && opModeIsActive()) {
+            telemetry.addData("Heading", gyro.getHeading());
+            telemetry.update();
+            motorFR.setPower(-.15);
+            motorBR.setPower(-.15);
+            motorFL.setPower(.15);
+            motorBL.setPower(.15);
+            telemetry.addData("Heading", gyro.getHeading());
+            telemetry.update();
+        }
+
+        // Drive to knock ball off center
+        encoderDrive(DRIVE_SPEED, -50, -50, -50, -50, 6);
+
+
 
     }
 
@@ -205,15 +237,19 @@ public class FinalAutonomous extends LinearOpMode {
                 telemetry.addData("motorFL: ", motorFL.getPower());
                 telemetry.addData("motorBR: ", motorBR.getPower());
                 telemetry.addData("motorBL: ", motorBL.getPower());
-                telemetry.addData("Blue ", colorSensor.blue());
+                telemetry.addData("Red ", colorSensor.red());
 
                 telemetry.update();
                 if (count == 1 && rangeSensor.cmUltrasonic() < 20 && rangeSensor.cmUltrasonic() != 0 &&opModeIsActive())
                     break;
 
-                if (count == 2 && colorSensor.blue() > 1 && opModeIsActive()) {
+                if (count == 2 && colorSensor.red() > 1 && opModeIsActive())
                     break;
-                }
+
+                if (count == 3 && rangeSensor.cmUltrasonic() < 10 && rangeSensor.cmUltrasonic() != 0 &&opModeIsActive())
+                    break;
+
+
                 /*if (!(count == 2 && gyro.getHeading() < 273 || (gyro.getHeading() > 278)) && opModeIsActive()) {
                     telemetry.addLine("Exiting");
                     break;

@@ -69,10 +69,10 @@ public class TeleOPMotorDrive6127 extends LinearOpMode
             BRspeed = Range.clip(BRspeed, -1, 1);
             BLspeed = Range.clip(BLspeed, -1, 1);
 
-            motorFR.setPower(FRspeed);
-            motorFL.setPower(FLspeed);
-            motorBR.setPower(BRspeed);
-            motorBL.setPower(BLspeed);
+            motorFR.setPower(-FRspeed);
+            motorFL.setPower(-FLspeed);
+            motorBR.setPower(-BRspeed);
+            motorBL.setPower(-BLspeed);
 
             if (gamepad1.y)
             {

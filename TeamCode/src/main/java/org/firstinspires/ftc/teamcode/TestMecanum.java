@@ -16,7 +16,6 @@ public class TestMecanum extends LinearOpMode
     private DcMotor motorFL;
     private DcMotor motorBR;
     private DcMotor motorBL;
-    private DcMotor motorBC;
     @Override
     public void runOpMode() throws InterruptedException
     {
