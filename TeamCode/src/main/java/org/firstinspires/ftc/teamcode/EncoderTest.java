@@ -92,6 +92,17 @@ public class EncoderTest extends LinearOpMode {
         telemetry.addData("Path", "Complete");
         telemetry.update();
 
+        /*// Rotating
+        telemetry.addData("Path", "Rotating");
+        telemetry.update();
+        sleep(1000);
+        encoderDrive(0.2, -59, 59, -59, 50, 7);
+        telemetry.addData("Path1",  "Starting at %7d :%7d  %7d :%7d ",
+                motorFR.getCurrentPosition(),
+                motorFL.getCurrentPosition(),
+                motorBR.getCurrentPosition(),
+                motorBL.getCurrentPosition());
+        telemetry.update();*/
 
     }
 
