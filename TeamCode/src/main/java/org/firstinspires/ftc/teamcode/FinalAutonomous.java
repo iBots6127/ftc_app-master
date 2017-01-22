@@ -21,8 +21,10 @@ public class FinalAutonomous extends LinearOpMode {
     private DcMotor motorFL;
     private DcMotor motorBR;
     private DcMotor motorBL;
-    private DcMotor motorBP;
+    private DcMotor motorBB;
+    private DcMotor motorCC;
     ModernRoboticsI2cRangeSensor rangeSensor;
+    ModernRoboticsI2cGyro gyro;
     ColorSensor colorSensor;
     private int count = 0;
 
@@ -46,23 +48,13 @@ public class FinalAutonomous extends LinearOpMode {
         // Range Sensor
         rangeSensor = hardwareMap.get(ModernRoboticsI2cRangeSensor.class, "sensor_range");
 
-        // Gyro Sensor
-        ModernRoboticsI2cGyro gyro = (ModernRoboticsI2cGyro)hardwareMap.gyroSensor.get("sensor_gyro");
-        int xVal, yVal, zVal = 0;     // Gyro rate Values
-        int heading = 0;              // Gyro integrated heading
-        int angleZ = 0;
-        telemetry.addData(">", "GYRO CALIBRATING, PLEASE HOLD");
-        telemetry.update();
-        gyro.calibrate();
-        while(gyro.isCalibrating()) { sleep(50); }
-        telemetry.addData(">", "GYRO CALIBRATED, CLEARED FOR TAKEOFF");
-        telemetry.update();
-
         // Initialization of Motors
         motorFR = hardwareMap.dcMotor.get("motorFR");
         motorFL = hardwareMap.dcMotor.get("motorFL");
         motorBR = hardwareMap.dcMotor.get("motorBR");
         motorBL = hardwareMap.dcMotor.get("motorBL");
+        motorBB = hardwareMap.dcMotor.get("motorBB");
+        motorCC = hardwareMap.dcMotor.get("motorCC");
         motorFR.setDirection(DcMotor.Direction.REVERSE);
         motorBR.setDirection(DcMotor.Direction.REVERSE);
         // Set all motors to zero power
@@ -85,55 +77,50 @@ public class FinalAutonomous extends LinearOpMode {
         motorBL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         // Send telemetry message to indicate successful Encoder reset
-        telemetry.addData("Path0",  "Starting at %7d :%7d  %7d :%7d ",
-                motorFR.getCurrentPosition(),
-                motorFL.getCurrentPosition(),
-                motorBR.getCurrentPosition(),
-                motorBL.getCurrentPosition());
-        telemetry.update();
-
-        waitForStart();
-
-        xVal = gyro.rawX();
-        yVal = gyro.rawY();
-        zVal = gyro.rawZ();
-
-        heading = gyro.getHeading();
-        angleZ  = gyro.getIntegratedZValue();
-
-        telemetry.addData("0", "Heading %03d", heading);
-        telemetry.addData("1", "Int. Ang. %03d", angleZ);
-        telemetry.addData("2", "X av. %03d", xVal);
-        telemetry.addData("3", "Y av. %03d", yVal);
-        telemetry.addData("4", "Z av. %03d", zVal);
-
-        // S1: Sideways 39 Inches with 10 Sec timeout
-
-
-        // S3: Forward 17 Inches with 20 Sec timeout
-        telemetry.addData("Path", "Driving Straight");
-        telemetry.update();
-        sleep(1000);
-        encoderDrive(DRIVE_SPEED, -25, -25, -25, -25, 3);
-        telemetry.addData("Path1",  "Starting at %7d :%7d  %7d :%7d ",
-                motorFR.getCurrentPosition(),
-                motorFL.getCurrentPosition(),
-                motorBR.getCurrentPosition(),
-                motorBL.getCurrentPosition());
-        telemetry.update();
-
-        /*// S3: Forward 17 Inches with 20 Sec timeout
-        telemetry.addData("Path", "Rotating");
-        telemetry.update();
-        sleep(1000);
-        encoderDrive(0.2, -59, 59, -59, 50, 7);
-        telemetry.addData("Path1",  "Starting at %7d :%7d  %7d :%7d ",
+       /* telemetry.addData("Path0",  "Starting at %7d :%7d  %7d :%7d ",
                 motorFR.getCurrentPosition(),
                 motorFL.getCurrentPosition(),
                 motorBR.getCurrentPosition(),
                 motorBL.getCurrentPosition());
         telemetry.update();*/
 
+        // Gyro Sensor
+        gyro = (ModernRoboticsI2cGyro)hardwareMap.gyroSensor.get("sensor_gyro");
+        int xVal, yVal, zVal = 0;     // Gyro rate Values
+        int heading = 0;              // Gyro integrated heading
+        int angleZ = 0;
+        telemetry.addData(">", "GYRO CALIBRATING, PLEASE HOLD");
+        telemetry.update();
+        gyro.calibrate();
+        while(gyro.isCalibrating()) { sleep(50); }
+        telemetry.addData(">", "GYRO CALIBRATED, CLEARED FOR TAKEOFF");
+        telemetry.update();
+        telemetry.addData("Heading", gyro.getHeading());
+        telemetry.update();
+        // End of init
+
+        waitForStart();  // Everything after this point will only happen after play button pressed
+        telemetry.clearAll();
+        telemetry.addData("Heading", gyro.getHeading());
+        telemetry.addData("motorFR: ", motorFR.getPower());
+        telemetry.addData("motorFL: ", motorFL.getPower());
+        telemetry.addData("motorBR: ", motorBR.getPower());
+        telemetry.addData("motorBL: ", motorBL.getPower());
+        telemetry.update();
+
+        // Start of all movement
+        // Shoot the ball at start
+        motorCC.setTargetPosition(1080);
+        motorCC.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motorCC.setPower(0.5);
+        sleep(1000);
+        motorCC.setPower(0);
+
+        // Forward Movement towards middle
+        telemetry.clearAll();
+        encoderDrive(DRIVE_SPEED, -25, -25, -25, -25, 3);
+
+        // Gyro Turn
         while(gyro.getHeading() < 270 || (gyro.getHeading() > 275) && opModeIsActive()) {
             telemetry.addData("Heading", gyro.getHeading());
             telemetry.update();
@@ -148,55 +135,17 @@ public class FinalAutonomous extends LinearOpMode {
         motorBR.setPower(0);
         motorFL.setPower(0);
         motorBL.setPower(0);
+        sleep(500);
 
+        // Driving Towards wall
         count = 1;
-        telemetry.addData("Path", "Driving Straight");
-        telemetry.update();
-        sleep(1000);
         encoderDrive(DRIVE_SPEED, -60, -60, -60, -60, 7);
-        telemetry.addData("Path1",  "Starting at %7d :%7d  %7d :%7d ",
-                motorFR.getCurrentPosition(),
-                motorFL.getCurrentPosition(),
-                motorBR.getCurrentPosition(),
-                motorBL.getCurrentPosition());
-        telemetry.update();
 
-        /*while (rangeSensor.cmUltrasonic() > 15 || rangeSensor.cmUltrasonic() == 0 && opModeIsActive()) {
-            motorFR.setPower(-0.5);
-            motorFL.setPower(-0.5);
-            motorBR.setPower(-0.5);
-            motorBL.setPower(-0.5);
-            telemetry.addData("cm sensed", rangeSensor.cmUltrasonic());
-            telemetry.update();
-        }
-        motorFR.setPower(0);
-        motorBR.setPower(0);
-        motorFL.setPower(0);
-        motorBL.setPower(0);*/
-        /**
-         * To Be Added:
-         *  1. Range Sensor senses wall and stops robot when it's near the wall and a count variable
-         *  increments past one, nullifying the if statement with the range sensor inside of the
-         *  code dictating what is done during encoderDrive
-         *  Helper Programs: RangeTest(not made yet), GyroTest, MRI_ODS_Wall_Follow
-         *
-         *  2. New count type variable made for the color sensor portion that allows the if statement
-         *  to remain active when the count is less than 2 (for the two beacons). Robot slowly strafes
-         *  until it reaches a beacon with the corresponding color and when it reaches the color
-         *  it presses button and then backs out and repeats for the next beacon.
-         *  Helper Programs: ColorTest, EncoderTest
-         *
-         *  3. Strafe away from the wall, turn, and position the robot so it can shoot the ball
-         *  Helper Programs: EncoderTest, GyroTest
-         *
-         *  4. Hit the ball of the wooden stand
-         *  Helper Programs: EncoderTest, GyroTest
-         *
-         *  Notes: Add some part of the program so that the robot stays a certain distance from the
-         *  wall at all times
-         *  Helper Programs: EncoderTest, RangeTest(not made yet), MRI_ODS_Wall_Follow
-         *
-         */
+
+        // Strafing towards the right
+        count = 2;
+        encoderDrive(TURN_SPEED, 100, -100, -100, 100, 10);
+        sleep(50000);
 
     }
 
@@ -250,8 +199,28 @@ public class FinalAutonomous extends LinearOpMode {
                     || ((motorBL.getCurrentPosition() <  newmotorBLTarget) && motorBL.isBusy()))*/
                     && (motorFR.isBusy() || motorFL.isBusy() || motorBR.isBusy() || motorBL.isBusy()))
             {
-                if (count == 1 && rangeSensor.cmUltrasonic() < 20 && rangeSensor.cmUltrasonic() != 0)
+                telemetry.addData("Heading", gyro.getHeading());
+                telemetry.addData("cm", rangeSensor.cmUltrasonic());
+                telemetry.addData("motorFR: ", motorFR.getPower());
+                telemetry.addData("motorFL: ", motorFL.getPower());
+                telemetry.addData("motorBR: ", motorBR.getPower());
+                telemetry.addData("motorBL: ", motorBL.getPower());
+                telemetry.addData("Blue ", colorSensor.blue());
+
+                telemetry.update();
+                if (count == 1 && rangeSensor.cmUltrasonic() < 20 && rangeSensor.cmUltrasonic() != 0 &&opModeIsActive())
                     break;
+
+                if (count == 2 && colorSensor.blue() > 1 && opModeIsActive()) {
+                    break;
+                }
+                /*if (!(count == 2 && gyro.getHeading() < 273 || (gyro.getHeading() > 278)) && opModeIsActive()) {
+                    telemetry.addLine("Exiting");
+                    break;
+                }*/
+
+
+
             }
 
             // Stop all motion;
