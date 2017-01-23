@@ -12,8 +12,10 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Created by Shlok on 1/3/2017. *
  */
 
-@Autonomous(name = "M1AutonomousBlue", group = "Final")
-public class M1AutonomousBlue extends LinearOpMode {
+@Autonomous(name = "onlyBallShooting", group = "Test")
+public class OnlyBallShooting extends LinearOpMode {
+    private ElapsedTime runtime2 = new ElapsedTime();
+
     // Drive System for Basic Movement
     private DcMotor motorFR;
     private DcMotor motorFL;
@@ -82,98 +84,30 @@ public class M1AutonomousBlue extends LinearOpMode {
                 motorBL.getCurrentPosition());
         telemetry.update();*/
 
-        // Gyro Sensor
-        gyro = (ModernRoboticsI2cGyro)hardwareMap.gyroSensor.get("sensor_gyro");
-        int xVal, yVal, zVal = 0;     // Gyro rate Values
-        int heading = 0;              // Gyro integrated heading
-        int angleZ = 0;
-        telemetry.addData(">", "GYRO CALIBRATING, PLEASE HOLD");
-        telemetry.update();
-        gyro.calibrate();
-        while(gyro.isCalibrating()) { sleep(50); }
-        telemetry.addData(">", "GYRO CALIBRATED, CLEARED FOR TAKEOFF");
-        telemetry.update();
-        telemetry.addData("Heading", gyro.getHeading());
-        telemetry.update();
-        // End of init
-
         waitForStart();  // Everything after this point will only happen after play button pressed
-        telemetry.clearAll();
-        telemetry.addData("Heading", gyro.getHeading());
-        telemetry.addData("motorFR: ", motorFR.getPower());
-        telemetry.addData("motorFL: ", motorFL.getPower());
-        telemetry.addData("motorBR: ", motorBR.getPower());
-        telemetry.addData("motorBL: ", motorBL.getPower());
-        telemetry.update();
+
 
         // Start of all movement
         // Shoot the ball at start
-        motorCC.setTargetPosition(1080);
+        motorCC.setTargetPosition(1200);
         motorCC.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         motorCC.setPower(0.5);
         sleep(1000);
         motorCC.setPower(0);
+        sleep(5000);
 
-        // Forward Movement towards middle (away from start)
-        telemetry.clearAll();
-        encoderDrive(DRIVE_SPEED, -30, -30, -30, -30, 3);
-
-        // Gyro Turn 90 degrees (270 heading) toward wall
-        while(gyro.getHeading() < 90 || (gyro.getHeading() > 95) && opModeIsActive()) {
-            telemetry.addData("Heading", gyro.getHeading());
-            telemetry.update();
-            motorFR.setPower(.15);
-            motorBR.setPower(.15);
-            motorFL.setPower(-.15);
-            motorBL.setPower(-.15);
-            telemetry.addData("Heading", gyro.getHeading());
-            telemetry.update();
-        }
-        motorFR.setPower(0);
-        motorBR.setPower(0);
-        motorFL.setPower(0);
-        motorBL.setPower(0);
-        sleep(500);
-
-        // Driving Towards wall
-        count = 1;
-        encoderDrive(DRIVE_SPEED, -60, -60, -60, -60, 7);
-
-
-        // Strafing towards the left #1
-        count = 2;
-        encoderDrive(TURN_SPEED, -40, 40, 40, -40, 4);
-        //Press Button after color is sensed #1
-        count = 0;
-        encoderDrive(TURN_SPEED, -3, 3, 3, -3, 2);
-        encoderDrive(TURN_SPEED, -3.5, -3.5, -3.5, -3.5, 3);
-        encoderDrive(TURN_SPEED, 2.5, 2.5, 2.5, 2.5, 2);
-
-        // Strafing towards the left #2
-        encoderDrive(TURN_SPEED, -20, 20, 20, -20, 4);
-        count = 2;
-        encoderDrive(TURN_SPEED, -100, 100, 100, -100, 4);
-        //Press Button after color is sensed #2
-        count = 0;
-        encoderDrive(TURN_SPEED, -3, 3, 3, -3, 2);
-        count = 3;
-        encoderDrive(TURN_SPEED, -5, -5, -5, -5, 2);
-        encoderDrive(TURN_SPEED, 5, 5, 5, 5, 2);
-
-        // Turn towards center ball
-        while(gyro.getHeading() < 225 || (gyro.getHeading() > 230) && opModeIsActive()) {
-            telemetry.addData("Heading", gyro.getHeading());
-            telemetry.update();
-            motorFR.setPower(.15);
-            motorBR.setPower(.15);
-            motorFL.setPower(-.15);
-            motorBL.setPower(-.15);
-            telemetry.addData("Heading", gyro.getHeading());
-            telemetry.update();
+        double start = runtime2.seconds();
+        while(runtime2.seconds() < start + 12) {
+            motorBB.setPower(1);
         }
 
-        // Drive to knock ball off center
-        encoderDrive(DRIVE_SPEED, -50, -50, -50, -50, 6);
+        motorCC.setTargetPosition(2400);
+        motorCC.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motorCC.setPower(0.5);
+        sleep(1000);
+        motorCC.setPower(0);
+        sleep(5000);        // Drive to knock ball off center
+        // encoderDrive(DRIVE_SPEED, -50, -50, -50, -50, 6);
 
 
 
@@ -241,12 +175,13 @@ public class M1AutonomousBlue extends LinearOpMode {
                 if (count == 1 && rangeSensor.cmUltrasonic() < 20 && rangeSensor.cmUltrasonic() != 0 &&opModeIsActive())
                     break;
 
-                if (count == 2 && colorSensor.blue() > 1 && opModeIsActive()) {
-                    count = 0;
+                if (count == 2 && colorSensor.red() > 1 && opModeIsActive())
                     break;
-                }
+
                 if (count == 3 && rangeSensor.cmUltrasonic() < 10 && rangeSensor.cmUltrasonic() != 0 &&opModeIsActive())
                     break;
+
+
                 /*if (!(count == 2 && gyro.getHeading() < 273 || (gyro.getHeading() > 278)) && opModeIsActive()) {
                     telemetry.addLine("Exiting");
                     break;

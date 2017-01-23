@@ -25,7 +25,7 @@ public class GyroTest extends LinearOpMode {
     private DcMotor motorFL;
     private DcMotor motorBR;
     private DcMotor motorBL;
-    private ElapsedTime runtime = new ElapsedTime();
+   // private ElapsedTime runtime = new ElapsedTime();
 
     @Override
     public void runOpMode() {

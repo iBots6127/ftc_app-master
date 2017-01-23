@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.Qualifier1;
+package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.Range;
 
 /**
- * Created by FTC6127 on 12/26/2016.
+ * Created by Shlok on 1/22/2017.
  */
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -15,8 +15,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.Range;
 
-@TeleOp(name = "TeleOPMotorDrive6127", group = "Test")
-public class TeleOPMotorDrive6127 extends LinearOpMode
+@TeleOp(name = "TeleOpShootingForwardDrive", group = "Final")
+public class TeleOpShootingForwardDrive extends LinearOpMode
 {
     private DcMotor motorFR;
     private DcMotor motorFL;
@@ -59,20 +59,25 @@ public class TeleOPMotorDrive6127 extends LinearOpMode
 
         while(opModeIsActive())
         {
-            float FLspeed = gamepad1.left_stick_y - gamepad1.left_stick_x;
-            float BLspeed = gamepad1.left_stick_y + gamepad1.left_stick_x;
-            float FRspeed = gamepad1.right_stick_y + gamepad1.right_stick_x;
-            float BRspeed = gamepad1.right_stick_y - gamepad1.right_stick_x;
+           /* float FRspeed = gamepad1.left_stick_y - gamepad1.left_stick_x;
+            float BRspeed = gamepad1.left_stick_y + gamepad1.left_stick_x;
+            float FLspeed = gamepad1.right_stick_y + gamepad1.right_stick_x;
+            float BLspeed = gamepad1.right_stick_y - gamepad1.right_stick_x;*/
+
+            float FLspeed = gamepad1.right_stick_y - gamepad1.right_stick_x;
+            float BLspeed = gamepad1.right_stick_y + gamepad1.right_stick_x;
+            float FRspeed = gamepad1.left_stick_y + gamepad1.left_stick_x;
+            float BRspeed = gamepad1.left_stick_y - gamepad1.left_stick_x;
 
             FRspeed = Range.clip(FRspeed, -1, 1);
             FLspeed = Range.clip(FLspeed, -1, 1);
             BRspeed = Range.clip(BRspeed, -1, 1);
             BLspeed = Range.clip(BLspeed, -1, 1);
 
-            motorFR.setPower(FRspeed);
-            motorFL.setPower(FLspeed);
-            motorBR.setPower(BRspeed);
-            motorBL.setPower(BLspeed);
+            motorFR.setPower(-FRspeed);
+            motorFL.setPower(-FLspeed);
+            motorBR.setPower(-BRspeed);
+            motorBL.setPower(-BLspeed);
 
             if (gamepad1.y)
             {
@@ -99,9 +104,6 @@ public class TeleOPMotorDrive6127 extends LinearOpMode
 
                 motorBB.setPower(0);
             }
-
-
-
         }
     }
 }

@@ -118,7 +118,8 @@ public class M1AutonomousRed extends LinearOpMode {
 
         // Forward Movement towards middle (away from start)
         telemetry.clearAll();
-        encoderDrive(DRIVE_SPEED, -30, -30, -30, -30, 3);
+        encoderDrive(DRIVE_SPEED, -35, -35, -35, -35, 4);
+        encoderDrive(DRIVE_SPEED, 3, 3, 3, 3, 4);
 
         // Gyro Turn 90 degrees (270 heading) toward wall
         while(gyro.getHeading() < 270 || (gyro.getHeading() > 275) && opModeIsActive()) {
@@ -148,34 +149,34 @@ public class M1AutonomousRed extends LinearOpMode {
         //Push Button after color is sensed #1
         count = 0;
         encoderDrive(TURN_SPEED, 3, -3, -3, 3, 2);
-        encoderDrive(TURN_SPEED, -2.5, -2.5, -2.5, -2.5, 2);
+        encoderDrive(TURN_SPEED, -3, -3, -3, -3, 2);
         encoderDrive(TURN_SPEED, 2.5, 2.5, 2.5, 2.5, 2);
 
         // Strafing towards the right #2
-        encoderDrive(TURN_SPEED, 20, -20, -20, 20, 4);
+        encoderDrive(DRIVE_SPEED, 40, -40, -40, 40, 5);
         count = 2;
         encoderDrive(TURN_SPEED, 100, -100, -100, 100, 10);
         //Press Button after color is sensed #2
         count = 0;
         encoderDrive(TURN_SPEED, 3, -3, -3, 3, 2);
-        count = 3;
+        count = 0;
         encoderDrive(TURN_SPEED, -5, -5, -5, -5, 2);
         encoderDrive(TURN_SPEED, 5, 5, 5, 5, 2);
 
-        // Turn towards center ball
-        while(gyro.getHeading() < 135 || (gyro.getHeading() > 140) && opModeIsActive()) {
+       /* // Turn towards center ball
+        while(gyro.getHeading() < 225 || (gyro.getHeading() > 225) && opModeIsActive()) {
             telemetry.addData("Heading", gyro.getHeading());
             telemetry.update();
-            motorFR.setPower(-.15);
-            motorBR.setPower(-.15);
-            motorFL.setPower(.15);
-            motorBL.setPower(.15);
+            motorFR.setPower(-.5);
+            motorBR.setPower(-.5);
+            motorFL.setPower(.5);
+            motorBL.setPower(.5);
             telemetry.addData("Heading", gyro.getHeading());
             telemetry.update();
-        }
+        }*/
 
         // Drive to knock ball off center
-        encoderDrive(DRIVE_SPEED, -50, -50, -50, -50, 6);
+        //encoderDrive(DRIVE_SPEED, -50, -50, -50, -50, 6);
 
 
 

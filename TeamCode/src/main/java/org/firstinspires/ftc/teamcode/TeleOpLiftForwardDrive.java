@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.Qualifier1;
+package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -6,17 +6,11 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.Range;
 
 /**
- * Created by FTC6127 on 12/26/2016.
+ * Created by Shlok on 1/22/2017.
  */
 
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.util.Range;
-
-@TeleOp(name = "TeleOPMotorDrive6127", group = "Test")
-public class TeleOPMotorDrive6127 extends LinearOpMode
+@TeleOp(name = "TeleOpLiftForwardDrive", group = "Final")
+public class TeleOpLiftForwardDrive extends LinearOpMode
 {
     private DcMotor motorFR;
     private DcMotor motorFL;
