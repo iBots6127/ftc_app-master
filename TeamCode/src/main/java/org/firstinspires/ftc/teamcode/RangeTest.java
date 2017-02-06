@@ -28,6 +28,7 @@ public class RangeTest extends LinearOpMode {
             telemetry.addData("cm optical", "%.2f cm", rangeSensor.cmOptical());
             telemetry.addData("cm", "%.2f cm", rangeSensor.getDistance(DistanceUnit.CM));
             telemetry.update();
+            telemetry.addData("cm sensed", rangeSensor.cmUltrasonic());
             if(rangeSensor.rawUltrasonic() < 255)
                 telemetry.addData("saw something maybe", rangeSensor.rawUltrasonic());
         }

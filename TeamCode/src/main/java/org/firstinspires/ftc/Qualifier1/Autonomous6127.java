@@ -73,7 +73,11 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
 
-        telemetry.addData("Path", "Straight friday");
+        telemetry.addData("Path", "Straight");
+        telemetry.update();
+        encoderDrive(DRIVE_SPEED,  60, 60, 60, 60, 10 , false); // S1: Forward 47 Inches with 5 Sec timeout
+
+      telemetry.addData("Path", "Straight friday");
         telemetry.update();
         encoderDrive(DRIVE_SPEED,  65, 65, 65, 65, 2.5 , false); // S1: Forward 47 Inches with 5 Sec timeout
         telemetry.addData("final",  "Starting at %7d :%7d  %7d :%7d ",
@@ -85,9 +89,11 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
         telemetry.update();
         sleep(1000);
         encoderDrive(TURN_SPEED,   -15, 15, -15, 15, 2.7, false);  // S2: Turn Left with 4 Sec timeout
+
         telemetry.addData("final",  "Starting at %7d :%7d  %7d :%7d ",
                 robot.topleftMotor.getCurrentPosition(),
                 robot.toprightMotor.getCurrentPosition(),  robot.botleftMotor.getCurrentPosition(),  robot.botrightMotor.getCurrentPosition());
+
 
 
         telemetry.addData("Path", "Straight2");
@@ -122,10 +128,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
         telemetry.addData("Path", "Reverse");
         telemetry.update();
 
-        sleep(1000);     // pause for servos to move
-
         telemetry.addData("Path", "Complete");
         telemetry.update();
+
 
 
     }
