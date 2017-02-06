@@ -12,11 +12,10 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Created by Shlok on 1/3/2017. *
  */
 
-@Autonomous(name = "OnlyBallShooting", group = "Test")
-public class OnlyBallShooting extends LinearOpMode {
-    private ElapsedTime runtime2 = new ElapsedTime();
-
+@Autonomous(name = "AutonomousTesting", group = "Final")
+public class AutonomousTesting extends LinearOpMode {
     // Drive System for Basic Movement
+    private ElapsedTime runtime2 = new ElapsedTime();
     private DcMotor motorFR;
     private DcMotor motorFL;
     private DcMotor motorBR;
@@ -70,13 +69,12 @@ public class OnlyBallShooting extends LinearOpMode {
         motorFL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
         motorFR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorFL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorBR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorBL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        telemetry.addData("Status", "Finished Resetting Encoders");    //
-        telemetry.update();
         // Send telemetry message to indicate successful Encoder reset
        /* telemetry.addData("Path0",  "Starting at %7d :%7d  %7d :%7d ",
                 motorFR.getCurrentPosition(),
@@ -85,46 +83,62 @@ public class OnlyBallShooting extends LinearOpMode {
                 motorBL.getCurrentPosition());
         telemetry.update();*/
 
+        // Gyro Sensor
+        gyro = (ModernRoboticsI2cGyro)hardwareMap.gyroSensor.get("sensor_gyro");
+        int xVal, yVal, zVal = 0;     // Gyro rate Values
+        int heading = 0;              // Gyro integrated heading
+        int angleZ = 0;
+        telemetry.addData(">", "GYRO CALIBRATING, PLEASE HOLD");
+        telemetry.update();
+        gyro.calibrate();
+        while(gyro.isCalibrating()) { sleep(50); }
+        telemetry.addData(">", "GYRO CALIBRATED, CLEARED FOR TAKEOFF");
+        telemetry.update();
+        telemetry.addData("Heading", gyro.getHeading());
+        telemetry.update();
+        // End of init
+
         waitForStart();  // Everything after this point will only happen after play button pressed
+        telemetry.clearAll();
+        telemetry.addData("Heading", gyro.getHeading());
+        telemetry.addData("motorFR: ", motorFR.getPower());
+        telemetry.addData("motorFL: ", motorFL.getPower());
+        telemetry.addData("motorBR: ", motorBR.getPower());
+        telemetry.addData("motorBL: ", motorBL.getPower());
+        telemetry.update();
 
-
-        // Start of all movement
-        sleep(10000);
-        double start = runtime2.seconds();
-        while(runtime2.seconds() < start + 1) {
-            motorFR.setPower(-1);
-            motorFL.setPower(-1);
-            motorBR.setPower(-1);
-            motorBL.setPower(-1);
-        }
+        // Drive Forward from start
+        encoderDrive(TURN_SPEED, -20, -20, -20, -20, 4);
         motorFR.setPower(0);
         motorFL.setPower(0);
         motorBR.setPower(0);
         motorBL.setPower(0);
 
-        // Shoot the ball after movement
-        while(runtime2.seconds() < start +  2) {
+        // Shoot ball
+        double start = runtime2.seconds();
+        while(runtime2.seconds() < start +  1.5) {
             motorCC.setPower(1);
         }
         motorCC.setPower(0);
         sleep(500);
 
-        start = runtime2.seconds();
-
-        while(runtime2.seconds() < start +  2) {
-            motorFR.setPower(-1);
-            motorFL.setPower(-1);
-            motorBR.setPower(-1);
-            motorBL.setPower(-1);
+        // Move a little forward
+        encoderDrive(TURN_SPEED, -10, -10, -10, -10, 4);
+        while(gyro.getHeading() < 270 || (gyro.getHeading() > 275) && opModeIsActive()) {
+            telemetry.addData("Heading", gyro.getHeading());
+            telemetry.update();
+            motorFR.setPower(-.15);
+            motorBR.setPower(-.15);
+            motorFL.setPower(.15);
+            motorBL.setPower(.15);
+            telemetry.addData("Heading", gyro.getHeading());
+            telemetry.update();
         }
         motorFR.setPower(0);
-        motorFL.setPower(0);
         motorBR.setPower(0);
+        motorFL.setPower(0);
         motorBL.setPower(0);
-
-
-
-
+        sleep(500);
 
     }
 
@@ -180,10 +194,10 @@ public class OnlyBallShooting extends LinearOpMode {
             {
                 telemetry.addData("Heading", gyro.getHeading());
                 telemetry.addData("cm", rangeSensor.cmUltrasonic());
-                telemetry.addData("motorFR: ", motorFR.getPower());
-                telemetry.addData("motorFL: ", motorFL.getPower());
-                telemetry.addData("motorBR: ", motorBR.getPower());
-                telemetry.addData("motorBL: ", motorBL.getPower());
+                telemetry.addData("motorFR: ", motorFR.getCurrentPosition());
+                telemetry.addData("motorFL: ", motorFL.getCurrentPosition());
+                telemetry.addData("motorBR: ", motorBR.getCurrentPosition());
+                telemetry.addData("motorBL: ", motorBL.getCurrentPosition());
                 telemetry.addData("Red ", colorSensor.red());
 
                 telemetry.update();
@@ -195,14 +209,6 @@ public class OnlyBallShooting extends LinearOpMode {
 
                 if (count == 3 && rangeSensor.cmUltrasonic() < 10 && rangeSensor.cmUltrasonic() != 0 &&opModeIsActive())
                     break;
-
-
-                /*if (!(count == 2 && gyro.getHeading() < 273 || (gyro.getHeading() > 278)) && opModeIsActive()) {
-                    telemetry.addLine("Exiting");
-                    break;
-                }*/
-
-
 
             }
 

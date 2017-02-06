@@ -12,10 +12,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Created by Shlok on 1/3/2017. *
  */
 
-@Autonomous(name = "OnlyBallShooting", group = "Test")
-public class OnlyBallShooting extends LinearOpMode {
+@Autonomous(name = "EmergencyM1AutonomousRed", group = "Final")
+public class EmergencyAutononmousRed extends LinearOpMode {
     private ElapsedTime runtime2 = new ElapsedTime();
-
     // Drive System for Basic Movement
     private DcMotor motorFR;
     private DcMotor motorFL;
@@ -70,13 +69,12 @@ public class OnlyBallShooting extends LinearOpMode {
         motorFL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
         motorFR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorFL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorBR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorBL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        telemetry.addData("Status", "Finished Resetting Encoders");    //
-        telemetry.update();
         // Send telemetry message to indicate successful Encoder reset
        /* telemetry.addData("Path0",  "Starting at %7d :%7d  %7d :%7d ",
                 motorFR.getCurrentPosition(),
@@ -85,13 +83,45 @@ public class OnlyBallShooting extends LinearOpMode {
                 motorBL.getCurrentPosition());
         telemetry.update();*/
 
-        waitForStart();  // Everything after this point will only happen after play button pressed
+        // Gyro Sensor
+        gyro = (ModernRoboticsI2cGyro)hardwareMap.gyroSensor.get("sensor_gyro");
+        int xVal, yVal, zVal = 0;     // Gyro rate Values
+        int heading = 0;              // Gyro integrated heading
+        int angleZ = 0;
+        telemetry.addData(">", "GYRO CALIBRATING, PLEASE HOLD");
+        telemetry.update();
+        gyro.calibrate();
+        while(gyro.isCalibrating()) { sleep(50); }
+        telemetry.addData(">", "GYRO CALIBRATED, CLEARED FOR TAKEOFF");
+        telemetry.update();
+        telemetry.addData("Heading", gyro.getHeading());
+        telemetry.update();
+        // End of init
 
+        waitForStart();  // Everything after this point will only happen after play button pressed
+        telemetry.clearAll();
+        telemetry.addData("Heading", gyro.getHeading());
+        telemetry.addData("motorFR: ", motorFR.getPower());
+        telemetry.addData("motorFL: ", motorFL.getPower());
+        telemetry.addData("motorBR: ", motorBR.getPower());
+        telemetry.addData("motorBL: ", motorBL.getPower());
+        telemetry.update();
 
         // Start of all movement
-        sleep(10000);
+        //encoderDrive(DRIVE_SPEED, -15, -15, -15, -15, 2.5);
+        /*motorCC.setTargetPosition(1080);
+        motorCC.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motorCC.setPower(0.5);
+        sleep(1000);
+        motorCC.setPower(0);*/
+        // Shoot the ball at start
+
+        // Forward Movement towards middle (away from start)
+        /*encoderDrive(DRIVE_SPEED, -35, -35, -35, -35, 3.2);
+        encoderDrive(DRIVE_SPEED, 3, 3, 3, 3, 4);*/
+        // Forward Movement towards middle (away from start)
         double start = runtime2.seconds();
-        while(runtime2.seconds() < start + 1) {
+        while(runtime2.seconds() < start + 1.2) {
             motorFR.setPower(-1);
             motorFL.setPower(-1);
             motorBR.setPower(-1);
@@ -102,27 +132,176 @@ public class OnlyBallShooting extends LinearOpMode {
         motorBR.setPower(0);
         motorBL.setPower(0);
 
-        // Shoot the ball after movement
-        while(runtime2.seconds() < start +  2) {
-            motorCC.setPower(1);
+        // Gyro Turn 90 degrees (270 heading) toward wall
+        while(gyro.getHeading() < 270 || (gyro.getHeading() > 275) && opModeIsActive()) {
+            telemetry.addData("Heading", gyro.getHeading());
+            telemetry.update();
+            motorFR.setPower(-.15);
+            motorBR.setPower(-.15);
+            motorFL.setPower(.15);
+            motorBL.setPower(.15);
+            telemetry.addData("Heading", gyro.getHeading());
+            telemetry.update();
         }
-        motorCC.setPower(0);
+        motorFR.setPower(0);
+        motorBR.setPower(0);
+        motorFL.setPower(0);
+        motorBL.setPower(0);
         sleep(500);
 
+        // Driving Towards wall
+        count = 1;
+        //encoderDrive(DRIVE_SPEED, -60, -60, -60, -60, 7);
         start = runtime2.seconds();
-
-        while(runtime2.seconds() < start +  2) {
-            motorFR.setPower(-1);
-            motorFL.setPower(-1);
-            motorBR.setPower(-1);
-            motorBL.setPower(-1);
+        while(runtime2.seconds() < start + 6) {
+            motorFR.setPower(-0.7);
+            motorFL.setPower(-0.7);
+            motorBR.setPower(-0.7);
+            motorBL.setPower(-0.7);
         }
         motorFR.setPower(0);
         motorFL.setPower(0);
         motorBR.setPower(0);
         motorBL.setPower(0);
 
+        // Strafing towards the right #1
+        count = 2;
+        //encoderDrive(TURN_SPEED, 40, -40, -40, 40, 4);
+        start = runtime2.seconds();
+        while(runtime2.seconds() < start + 4) {
+            motorFR.setPower(0.3);
+            motorFL.setPower(-0.3);
+            motorBR.setPower(-0.3);
+            motorBL.setPower(0.3);
+        }
+        motorFR.setPower(0);
+        motorFL.setPower(0);
+        motorBR.setPower(0);
+        motorBL.setPower(0);
+        //Push Button after color is sensed #1
+        count = 0;
+        start = runtime2.seconds();
+        while(runtime2.seconds() < start + 0.3) {
+            motorFR.setPower(0.5);
+            motorFL.setPower(-0.5);
+            motorBR.setPower(-0.5);
+            motorBL.setPower(0.5);
+        }
+        motorFR.setPower(0);
+        motorFL.setPower(0);
+        motorBR.setPower(0);
+        motorBL.setPower(0);
+        start = runtime2.seconds();
+        while(runtime2.seconds() < start + 0.5) {
+            motorFR.setPower(-0.3);
+            motorFL.setPower(-0.3);
+            motorBR.setPower(-0.3);
+            motorBL.setPower(-0.3);
+        }
+        motorFR.setPower(0);
+        motorFL.setPower(0);
+        motorBR.setPower(0);
+        motorBL.setPower(0);
+        start = runtime2.seconds();
+        while(runtime2.seconds() < start + 0.5) {
+            motorFR.setPower(0.3);
+            motorFL.setPower(0.3);
+            motorBR.setPower(0.3);
+            motorBL.setPower(0.3);
+        }
+        motorFR.setPower(0);
+        motorFL.setPower(0);
+        motorBR.setPower(0);
+        motorBL.setPower(0);
+        /*count = 0;
+        encoderDrive(TURN_SPEED, 3, -3, -3, 3, 2);
+        encoderDrive(TURN_SPEED, -3, -3, -3, -3, 2);
+        encoderDrive(TURN_SPEED, 2.5, 2.5, 2.5, 2.5, 2);*/
 
+        // Strafing towards the right #2
+        start = runtime2.seconds();
+        while(runtime2.seconds() < start + 1) {
+            motorFR.setPower(0.6);
+            motorFL.setPower(0.6);
+            motorBR.setPower(0.6);
+            motorBL.setPower(0.6);
+        }
+        motorFR.setPower(0);
+        motorFL.setPower(0);
+        motorBR.setPower(0);
+        motorBL.setPower(0);
+
+        count = 2;
+        start = runtime2.seconds();
+        while(runtime2.seconds() < start + 1) {
+            motorFR.setPower(0.6);
+            motorFL.setPower(0.6);
+            motorBR.setPower(0.6);
+            motorBL.setPower(0.6);
+        }
+        motorFR.setPower(0);
+        motorFL.setPower(0);
+        motorBR.setPower(0);
+        motorBL.setPower(0);
+        /*encoderDrive(DRIVE_SPEED, 40, -40, -40, 40, 5);
+        count = 2;
+        encoderDrive(TURN_SPEED, 100, -100, -100, 100, 10);*/
+
+        //Press Button after color is sensed #2
+        count = 0;
+        start = runtime2.seconds();
+        while(runtime2.seconds() < start + 0.3) {
+            motorFR.setPower(0.5);
+            motorFL.setPower(-0.5);
+            motorBR.setPower(-0.5);
+            motorBL.setPower(0.5);
+        }
+        motorFR.setPower(0);
+        motorFL.setPower(0);
+        motorBR.setPower(0);
+        motorBL.setPower(0);
+        start = runtime2.seconds();
+        while(runtime2.seconds() < start + 0.5) {
+            motorFR.setPower(-0.3);
+            motorFL.setPower(-0.3);
+            motorBR.setPower(-0.3);
+            motorBL.setPower(-0.3);
+        }
+        motorFR.setPower(0);
+        motorFL.setPower(0);
+        motorBR.setPower(0);
+        motorBL.setPower(0);
+        start = runtime2.seconds();
+        while(runtime2.seconds() < start + 0.5) {
+            motorFR.setPower(0.3);
+            motorFL.setPower(0.3);
+            motorBR.setPower(0.3);
+            motorBL.setPower(0.3);
+        }
+        motorFR.setPower(0);
+        motorFL.setPower(0);
+        motorBR.setPower(0);
+        motorBL.setPower(0);
+        /*count = 0;
+        encoderDrive(TURN_SPEED, 3, -3, -3, 3, 2);
+        count = 0;
+        encoderDrive(TURN_SPEED, -5, -5, -5, -5, 2);
+        encoderDrive(TURN_SPEED, 5, 5, 5, 5, 2);*/
+
+       /* // Turn towards center ball
+        while(gyro.getHeading() < 225 || (gyro.getHeading() > 225) && opModeIsActive()) {
+            telemetry.addData("Heading", gyro.getHeading());
+            telemetry.update();
+            motorFR.setPower(-.5);
+            motorBR.setPower(-.5);
+            motorFL.setPower(.5);
+            motorBL.setPower(.5);
+            telemetry.addData("Heading", gyro.getHeading());
+            telemetry.update();
+        }*/
+
+        // Drive to knock ball off center
+        //encoderDrive(DRIVE_SPEED, -50, -50, -50, -50, 6);
 
 
 
@@ -176,7 +355,7 @@ public class OnlyBallShooting extends LinearOpMode {
                     || ((motorFL.getCurrentPosition() <  newmotorFLTarget) && motorFL.isBusy())
                     || ((motorBR.getCurrentPosition() <  newmotorBRTarget) && motorBR.isBusy())
                     || ((motorBL.getCurrentPosition() <  newmotorBLTarget) && motorBL.isBusy()))*/
-                    && (motorFR.isBusy() || motorFL.isBusy() || motorBR.isBusy() || motorBL.isBusy()))
+                    && (motorFR.isBusy() && motorFL.isBusy() || motorBR.isBusy() && motorBL.isBusy()))
             {
                 telemetry.addData("Heading", gyro.getHeading());
                 telemetry.addData("cm", rangeSensor.cmUltrasonic());
@@ -201,9 +380,6 @@ public class OnlyBallShooting extends LinearOpMode {
                     telemetry.addLine("Exiting");
                     break;
                 }*/
-
-
-
             }
 
             // Stop all motion;

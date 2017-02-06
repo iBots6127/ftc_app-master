@@ -12,8 +12,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Created by Shlok on 1/3/2017. *
  */
 
-@Autonomous(name = "OnlyBallShooting", group = "Test")
-public class OnlyBallShooting extends LinearOpMode {
+@Autonomous(name = "BallShootingStop", group = "Test")
+public class BallShootingStop extends LinearOpMode {
     private ElapsedTime runtime2 = new ElapsedTime();
 
     // Drive System for Basic Movement
@@ -109,18 +109,7 @@ public class OnlyBallShooting extends LinearOpMode {
         motorCC.setPower(0);
         sleep(500);
 
-        start = runtime2.seconds();
 
-        while(runtime2.seconds() < start +  2) {
-            motorFR.setPower(-1);
-            motorFL.setPower(-1);
-            motorBR.setPower(-1);
-            motorBL.setPower(-1);
-        }
-        motorFR.setPower(0);
-        motorFL.setPower(0);
-        motorBR.setPower(0);
-        motorBL.setPower(0);
 
 
 

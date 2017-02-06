@@ -92,7 +92,7 @@ public class TeleOpShootingForwardDrive extends LinearOpMode
                 motorCC.setPower(0);
             }
 
-            if (gamepad1.x)
+            if (gamepad1.right_bumper)
             {
                 //set choo choo encoder position
                 motorBB.setPower(0.5);

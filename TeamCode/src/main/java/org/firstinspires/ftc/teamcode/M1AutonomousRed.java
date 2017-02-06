@@ -115,10 +115,9 @@ public class M1AutonomousRed extends LinearOpMode {
         motorCC.setPower(0.5);
         sleep(1000);
         motorCC.setPower(0);
-
+        sleep(1000);
         // Forward Movement towards middle (away from start)
-        telemetry.clearAll();
-        encoderDrive(DRIVE_SPEED, -35, -35, -35, -35, 4);
+        encoderDrive(DRIVE_SPEED, -30, -30, -30, -30, 4);
         encoderDrive(DRIVE_SPEED, 3, 3, 3, 3, 4);
 
         // Gyro Turn 90 degrees (270 heading) toward wall

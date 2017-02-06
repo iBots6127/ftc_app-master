@@ -75,22 +75,24 @@ public class TeleOpLiftForwardDrive extends LinearOpMode
                 motorCC.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 motorCC.setPower(0.5);
                 telemetry.addData("position: ", motorCC.getCurrentPosition());
+                telemetry.update();
             }
             else {
                 motorCC.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 motorCC.setPower(0);
+                telemetry.addData("position: ", motorCC.getCurrentPosition());
+                telemetry.update();
             }
 
-            if (gamepad1.x)
+            if (gamepad1.right_bumper)
             {
                 //set choo choo encoder position
-                motorBB.setPower(0.5);
+                motorBB.setPower(-0.5);
                 telemetry.addData("BB",  "%.2f", 0.5);
                 telemetry.update();
 
             }
             else {
-
                 motorBB.setPower(0);
             }
 
