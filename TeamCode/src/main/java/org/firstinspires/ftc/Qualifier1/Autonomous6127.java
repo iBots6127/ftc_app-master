@@ -76,14 +76,60 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
         telemetry.addData("Path", "Straight");
         telemetry.update();
         encoderDrive(DRIVE_SPEED,  60, 60, 60, 60, 10 , false); // S1: Forward 47 Inches with 5 Sec timeout
+
+      telemetry.addData("Path", "Straight friday");
+        telemetry.update();
+        encoderDrive(DRIVE_SPEED,  65, 65, 65, 65, 2.5 , false); // S1: Forward 47 Inches with 5 Sec timeout
+        telemetry.addData("final",  "Starting at %7d :%7d  %7d :%7d ",
+                robot.topleftMotor.getCurrentPosition(),
+                robot.toprightMotor.getCurrentPosition(),  robot.botleftMotor.getCurrentPosition(),  robot.botrightMotor.getCurrentPosition());
+
+
+        telemetry.addData("Path", "Turn Left");
+        telemetry.update();
+        sleep(1000);
+        encoderDrive(TURN_SPEED,   -15, 15, -15, 15, 2.7, false);  // S2: Turn Left with 4 Sec timeout
+
         telemetry.addData("final",  "Starting at %7d :%7d  %7d :%7d ",
                 robot.topleftMotor.getCurrentPosition(),
                 robot.toprightMotor.getCurrentPosition(),  robot.botleftMotor.getCurrentPosition(),  robot.botrightMotor.getCurrentPosition());
 
 
 
+        telemetry.addData("Path", "Straight2");
+        telemetry.update();
+        sleep(1000);
+        encoderDrive(DRIVE_SPEED, 48, 48, 48, 48, 3 ,false);  // S3: Reverse 24 Inches with 4 Sec timeout
+        telemetry.addData("final",  "Starting at %7d :%7d  %7d :%7d ",
+                robot.topleftMotor.getCurrentPosition(),
+                robot.toprightMotor.getCurrentPosition(),  robot.botleftMotor.getCurrentPosition(),  robot.botrightMotor.getCurrentPosition());
+
+        telemetry.addData("Path", "Glide Right");
+        telemetry.update();
+        sleep(1000);
+        encoderDrive(DRIVE_SPEED, 40, -40, -40, 40, 3.0, false);  // S3: Reverse 24 Inches with 4 Sec timeout
+        telemetry.addData("final",  "Starting at %7d :%7d  %7d :%7d ",
+                robot.topleftMotor.getCurrentPosition(),
+                robot.toprightMotor.getCurrentPosition(),  robot.botleftMotor.getCurrentPosition(),  robot.botrightMotor.getCurrentPosition());
 
 
+        sleep(1000);
+
+        telemetry.addData("raw ultrasonic", rangeSensor.rawUltrasonic());
+        telemetry.addData("raw optical", rangeSensor.rawOptical());
+        telemetry.addData("cm optical", "%.2f cm", rangeSensor.cmOptical());
+        telemetry.addData("cm", "%.2f cm", rangeSensor.getDistance(DistanceUnit.CM));
+        telemetry.update();
+
+
+        sleep(2000);
+
+
+        telemetry.addData("Path", "Reverse");
+        telemetry.update();
+
+        telemetry.addData("Path", "Complete");
+        telemetry.update();
 
 
 
