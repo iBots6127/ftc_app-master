@@ -17,6 +17,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 @Autonomous(name = "M1AutonomousRed", group = "Final")
 public class M1AutonomousRed extends LinearOpMode {
     // Drive System for Basic Movement
+    private ElapsedTime runtime2 = new ElapsedTime();
     private DcMotor motorFR;
     private DcMotor motorFL;
     private DcMotor motorBR;
@@ -109,16 +110,20 @@ public class M1AutonomousRed extends LinearOpMode {
         telemetry.update();
 
         // Start of all movement
-        // Shoot the ball at start
-        motorCC.setTargetPosition(1080);
-        motorCC.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        motorCC.setPower(0.5);
-        sleep(1000);
-        motorCC.setPower(0);
-        sleep(1000);
+
         // Forward Movement towards middle (away from start)
-        encoderDrive(DRIVE_SPEED, -30, -30, -30, -30, 4);
-        encoderDrive(DRIVE_SPEED, 3, 3, 3, 3, 4);
+        encoderDrive(DRIVE_SPEED, -15, -15, -15, -15, 4);
+
+        // Shoot the ball after movement
+        double start = runtime2.seconds();
+        while(runtime2.seconds() < start +  1.5) {
+            motorCC.setPower(1);
+        }
+        motorCC.setPower(0);
+
+        // Move a little more forward
+        encoderDrive(DRIVE_SPEED, -18, -18, -18, -18, 2);
+        encoderDrive(DRIVE_SPEED, 4, 4, 4, 4, 2);
 
         // Gyro Turn 90 degrees (270 heading) toward wall
         while(gyro.getHeading() < 270 || (gyro.getHeading() > 275) && opModeIsActive()) {
@@ -147,9 +152,8 @@ public class M1AutonomousRed extends LinearOpMode {
         encoderDrive(TURN_SPEED, 40, -40, -40, 40, 4);
         //Push Button after color is sensed #1
         count = 0;
-        encoderDrive(TURN_SPEED, 3, -3, -3, 3, 2);
-        encoderDrive(TURN_SPEED, -3, -3, -3, -3, 2);
-        encoderDrive(TURN_SPEED, 2.5, 2.5, 2.5, 2.5, 2);
+        encoderDrive(TURN_SPEED, -3.5, -3.5, -3.5, -3.5, 2);
+        encoderDrive(TURN_SPEED, 3.5, 3.5, 3.5, 3.5, 2);
 
         // Strafing towards the right #2
         encoderDrive(DRIVE_SPEED, 40, -40, -40, 40, 5);
@@ -158,8 +162,8 @@ public class M1AutonomousRed extends LinearOpMode {
         //Press Button after color is sensed #2
         count = 0;
         encoderDrive(TURN_SPEED, 3, -3, -3, 3, 2);
-        count = 0;
-        encoderDrive(TURN_SPEED, -5, -5, -5, -5, 2);
+        count = 3;
+        encoderDrive(TURN_SPEED, -4, -4, -4, -4, 2);
         encoderDrive(TURN_SPEED, 5, 5, 5, 5, 2);
 
        /* // Turn towards center ball

@@ -32,9 +32,6 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
  */
 @TeleOp(name = "ColorTest", group = "Sensors")
 public class ColorTest extends LinearOpMode {
-  // For Line Follower
-  OpticalDistanceSensor lightSensor; // ODS used for line follower
-  double rightPower, leftPower, correction, lightPower;
   final double PERFECT_COLOR_VALUE = 0.2;
   // Color Sensing
   ColorSensor colorSensor;
@@ -53,7 +50,6 @@ public class ColorTest extends LinearOpMode {
     motorBR = hardwareMap.dcMotor.get("motorBR");
     motorBL = hardwareMap.dcMotor.get("motorBL");
     colorSensor = hardwareMap.colorSensor.get("sensor_color");
-    lightSensor = hardwareMap.opticalDistanceSensor.get("sensor_light");
     ModernRoboticsI2cGyro gyro = (ModernRoboticsI2cGyro)hardwareMap.gyroSensor.get("gyro");
 
     telemetry.addData(">", "Gyro Calibrating. Do Not move!");
@@ -113,7 +109,7 @@ public class ColorTest extends LinearOpMode {
       motorBR.setPower(BRspeed);
       motorBL.setPower(BLspeed);
       // Slows Down Movement
-      boolean bumperHeld = gamepad1.x;
+      boolean bumperHeld = gamepad1.right_bumper;
         if (bumperHeld) {
             motorFR.setPower(FRspeed/2);
             motorFL.setPower(FLspeed/2);
@@ -140,7 +136,6 @@ public class ColorTest extends LinearOpMode {
       telemetry.addData("Green", colorSensor.green());
       telemetry.addData("Blue ", colorSensor.blue());
       telemetry.addData("Hue", hsvValues[0]);
-      telemetry.addData("Light Value: ", lightSensor.getLightDetected());
 
       // If Color Sensor senses blue, drive forward for one second
       /* if (colorSensor.blue() > 1) {
@@ -154,8 +149,6 @@ public class ColorTest extends LinearOpMode {
         }*/
 
 
-      if (lightSensor.getLightDetected() > 0.1) {
-        telemetry.addData("SAW LINE", lightSensor.getLightDetected());
 
           /*double linetime = runtime.seconds();
         while (runtime.seconds() < linetime + 1) {
@@ -189,6 +182,6 @@ public class ColorTest extends LinearOpMode {
       telemetry.update();
     }
   }
-}
+
 
 
